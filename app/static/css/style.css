@@ -1,0 +1,26 @@
+.body-main{
+    background-color: rgb(255, 244, 230);
+}
+
+
+.navbar-main{
+    display: flex;
+    background-color: rgb(252, 169, 102);
+    height: 80px;
+    width: 100%;
+    justify-content: space-between;
+    position: fixed;
+    z-index: 5;
+}
+
+.logo{
+    height: 100%;
+    text-align: center;
+    align-content: center;
+    color: rgba(0, 0, 0, 0.774);
+    font-size: 2rem;
+    font-family: "Cal Sans", sans-serif;
+    font-weight: 700;
+    left: 0;
+    margin-left: 10px;
+}
