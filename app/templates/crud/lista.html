@@ -17,6 +17,7 @@
                     <th>Descripción</th>
                     <th>Precio</th>
                     <th>Cantidad en stock</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,6 +28,16 @@
                     <td>{{ stock.producto.descripcion }}</td>
                     <td>${{ stock.producto.precio }}</td>
                     <td>{{ stock.cantidad }}</td>
+                    <td>
+                        <form action="{% url 'agregar_stock' stock.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit">➕</button>
+                        </form>
+                        <form action="{% url 'rebajar_stock' stock.id %}" method="post" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit">➖</button>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
