@@ -1,0 +1,292 @@
+[
+    {
+    "model": "app.familiaproducto",
+    "pk": 1,
+    "fields": {
+        "nombre_familia": "Sistema de encendido"
+    }
+    },
+    {
+    "model": "app.familiaproducto",
+    "pk": 2,
+    "fields": {
+        "nombre_familia": "Lubricantes y fluidos"
+    }
+    },
+    {
+    "model": "app.familiaproducto",
+    "pk": 3,
+    "fields": {
+        "nombre_familia": "Sistema de frenos"
+    }
+    },
+    {
+    "model": "app.producto",
+    "pk": 1,
+    "fields": {
+        "familia": 1,
+        "nombre": "Bujía NGK BKR6E-11",
+        "precio": 5000,
+        "descripcion": "Bujía estándar para motor a gasolina."
+    }
+    },
+    {
+    "model": "app.producto",
+    "pk": 2,
+    "fields": {
+        "familia": 1,
+        "nombre": "Bobina de encendido Bosch 0986221026",
+        "precio": 25000,
+        "descripcion": "Bobina de encendido de alta calidad Bosch."
+    }
+    },
+    {
+    "model": "app.producto",
+    "pk": 3,
+    "fields": {
+        "familia": 2,
+        "nombre": "Aceite Mobil 1 5W-30 Sintético",
+        "precio": 30000,
+        "descripcion": "Aceite sintético para motor de alto rendimiento."
+    }
+    },
+    {
+    "model": "app.producto",
+    "pk": 4,
+    "fields": {
+        "familia": 2,
+        "nombre": "Líquido de frenos DOT 4 Mobil",
+        "precio": 7000,
+        "descripcion": "Líquido de frenos DOT 4 confiable y seguro."
+    }
+    },
+    {
+    "model": "app.producto",
+    "pk": 5,
+    "fields": {
+        "familia": 3,
+        "nombre": "Pastillas de freno Bosch BP1213",
+        "precio": 18000,
+        "descripcion": "Pastillas de freno de excelente rendimiento."
+    }
+    },
+    {
+    "model": "app.producto",
+    "pk": 6,
+    "fields": {
+        "familia": 3,
+        "nombre": "Disco de freno delantero Brembo 09.A200.1X",
+        "precio": 45000,
+        "descripcion": "Disco de freno delantero Brembo de alta calidad."
+    }
+    },
+    {
+        "model": "app.tipousuario",
+        "pk": 1,
+        "fields": {
+        "nombre_tipo_usuario": "Cliente B2B"
+        }
+    },
+    {
+        "model": "app.tipousuario",
+        "pk": 2,
+        "fields": {
+        "nombre_tipo_usuario": "Cliente B2C"
+        }
+    },
+    {
+        "model": "app.tipousuario",
+        "pk": 3,
+        "fields": {
+        "nombre_tipo_usuario": "Bodeguero"
+        }
+    },
+    {
+        "model": "app.tipousuario",
+        "pk": 4,
+        "fields": {
+        "nombre_tipo_usuario": "Vendedor"
+        }
+    },
+    {
+        "model": "app.tipousuario",
+        "pk": 5,
+        "fields": {
+        "nombre_tipo_usuario": "Administrador"
+        }
+    },
+    {
+        "model": "app.usuario",
+        "pk": "12345678",
+        "fields": {
+        "nombre_usuario": "Juan",
+        "apellido_usuario": "Pérez",
+        "contrasena": "clienteB2B123",
+        "tipo_usuario": 1
+        }
+    },
+    {
+        "model": "app.usuario",
+        "pk": "23456789",
+        "fields": {
+        "nombre_usuario": "María",
+        "apellido_usuario": "López",
+        "contrasena": "clienteB2C123",
+        "tipo_usuario": 2
+        }
+    },
+    {
+        "model": "app.usuario",
+        "pk": "34567890",
+        "fields": {
+        "nombre_usuario": "Carlos",
+        "apellido_usuario": "Soto",
+        "contrasena": "bodeguero123",
+        "tipo_usuario": 3
+        }
+    },
+    {
+        "model": "app.usuario",
+        "pk": "45678901",
+        "fields": {
+        "nombre_usuario": "Laura",
+        "apellido_usuario": "Muñoz",
+        "contrasena": "vendedor123",
+        "tipo_usuario": 4
+        }
+    },
+    {
+        "model": "app.usuario",
+        "pk": "56789012",
+        "fields": {
+        "nombre_usuario": "Andrés",
+        "apellido_usuario": "Salinas",
+        "contrasena": "admin123",
+        "tipo_usuario": 5
+        }
+    },
+    {
+        "model": "app.local",
+        "pk": 1,
+        "fields": {
+            "nombre_local": "Local Santiago Centro",
+            "direccion": "Av. Libertador Bernardo O'Higgins 1234, Santiago"
+        }
+    },
+    {
+        "model": "app.local",
+        "pk": 2,
+        "fields": {
+            "nombre_local": "Local Viña del Mar",
+            "direccion": "Calle Valparaíso 567, Viña del Mar"
+        }
+    },
+    {
+        "model": "app.stock",
+        "pk": 1,
+        "fields": {
+            "local": 1,
+            "producto": 1,
+            "cantidad": 15
+        }
+    },
+    {
+        "model": "app.stock",
+        "pk": 2,
+        "fields": {
+            "local": 1,
+            "producto": 2,
+            "cantidad": 10
+        }
+    },
+    {
+        "model": "app.stock",
+        "pk": 3,
+        "fields": {
+            "local": 1,
+            "producto": 3,
+            "cantidad": 20
+        }
+    },
+    {
+        "model": "app.stock",
+        "pk": 4,
+        "fields": {
+            "local": 1,
+            "producto": 4,
+            "cantidad": 25
+        }
+    },
+    {
+        "model": "app.stock",
+        "pk": 5,
+        "fields": {
+            "local": 1,
+            "producto": 5,
+            "cantidad": 8
+        }
+    },
+    {
+        "model": "app.stock",
+        "pk": 6,
+        "fields": {
+            "local": 1,
+            "producto": 6,
+            "cantidad": 12
+        }
+    },
+    {
+        "model": "app.stock",
+        "pk": 7,
+        "fields": {
+            "local": 2,
+            "producto": 1,
+            "cantidad": 5
+        }
+    },
+    {
+        "model": "app.stock",
+        "pk": 8,
+        "fields": {
+            "local": 2,
+            "producto": 2,
+            "cantidad": 4
+        }
+    },
+    {
+        "model": "app.stock",
+        "pk": 9,
+        "fields": {
+            "local": 2,
+            "producto": 3,
+            "cantidad": 10
+        }
+    },
+    {
+        "model": "app.stock",
+        "pk": 10,
+        "fields": {
+            "local": 2,
+            "producto": 4,
+            "cantidad": 7
+        }
+    },
+    {
+        "model": "app.stock",
+        "pk": 11,
+        "fields": {
+            "local": 2,
+            "producto": 5,
+            "cantidad": 3
+        }
+    },
+    {
+        "model": "app.stock",
+        "pk": 12,
+        "fields": {
+            "local": 2,
+            "producto": 6,
+            "cantidad": 6
+        }
+    }
+]  
