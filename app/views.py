@@ -7,4 +7,6 @@ from django.shortcuts import render
 def home(request):
     return render(request, 'app/home.html')
 def agregar(request):
-    return render (request, 'app/agregar.html')
+    return render (request, 'crud/agregar.html')
+def lista(request):
+    return render (request, 'crud/lista.html')
