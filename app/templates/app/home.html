@@ -5,16 +5,26 @@
 {% endblock %}
 
 {% block css %}
-
+<link rel="stylesheet" href="{% static 'app/css/style.css' %}">
 {% endblock %}
 
 {% block contenido %}
 
 <div>
-   <h1>arca</h1>
-   <h1>orca</h1> 
-   <h1>irca</h1> 
-   <h1>erca</h1>  
+   <div class="navbar-main">
+      <div class="logo">
+          <img src="{% static 'app/image/car.png' %}" alt="logo" height="60px">Autoparts
+      </div>
+      <div class="acnt">
+         <div><a href=""><img src="{% static 'app/image/account.png' %}" alt="" width="30px"></a></div>
+      </div>
+      <div class="lateral-bar">
+         <div><a href=""><img src="{% static 'app/image/home.png' %}" alt="" width="30px"></a></div>
+         <div><a href=""><img src="{% static 'app/image/shoppingcart.png' %}" alt="" width="30px"></a></div>
+         <div><a href=""><img src="{% static 'app/image/addproduct.png' %}" alt="" width="30px"></a></div>
+         <div><a href=""><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
+     </div>
+  </div>
 </div>
 
 {% endblock %}
