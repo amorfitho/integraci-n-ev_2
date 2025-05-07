@@ -24,3 +24,39 @@
     left: 0;
     margin-left: 10px;
 }
+
+.navbar-main button {
+    width: auto;
+    margin-top: 25px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+.acnt img{
+    display: flex;
+    text-align: center;
+    align-content: center;
+    height: 100%;
+    width: 40px;
+    margin-top: 25px;
+    margin-right: 50px;
+    background-color: rgba(180, 180, 180, 0);
+    align-items: center;
+}
+
+.lateral-bar{
+    display: flex;
+    margin-top: 80px;
+    /* border-right: 1px solid rgb(25, 25, 25); */
+    height: 1000px;
+    width: 300px;
+    position: fixed;
+    flex-direction: column;
+    text-decoration: none;
+    margin-left: 20px;
+
+}
+
+.lateral-bar div{
+    margin-top: 25px;
+}
