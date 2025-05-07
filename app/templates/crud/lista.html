@@ -1,16 +1,40 @@
 {% extends 'app/base.html' %}
 {% load static %}
 
-{% block js %}
-{% endblock %}
-
-{% block css %}
-{% endblock %}
-
 {% block contenido %}
+<h1>Listado de Sucursales y Stock de Productos</h1>
 
-<div>
+{% for local in locales %}
+    <h2>{{ local.nombre_local }}</h2>
+    <p><strong>Dirección:</strong> {{ local.direccion }}</p>
     
-</div>
+    {% if local.stocks.all %}
+        <table border="1" cellpadding="5">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Familia</th>
+                    <th>Descripción</th>
+                    <th>Precio</th>
+                    <th>Cantidad en stock</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stock in local.stocks.all %}
+                <tr>
+                    <td>{{ stock.producto.nombre }}</td>
+                    <td>{{ stock.producto.familia.nombre_familia }}</td>
+                    <td>{{ stock.producto.descripcion }}</td>
+                    <td>${{ stock.producto.precio }}</td>
+                    <td>{{ stock.cantidad }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay productos en stock en esta sucursal.</p>
+    {% endif %}
+    <hr>
+{% endfor %}
 
 {% endblock %}
