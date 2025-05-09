@@ -1,0 +1,7 @@
+POST a http://127.0.0.1:5000/stock/agregar o http://127.0.0.1:5000/stock/reducir con JSON:
+Se espera algo como en el body raw (JSON):
+{
+  "producto_id": 1,
+  "local_id": 1,
+  "cantidad": 5
+}

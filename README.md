@@ -1,13 +1,15 @@
 # integraci-n-ev_2
 repositorio para lo de integracion
 
+#
+
 ## ENTORNO VIRTUAL Y LEVANTAR PÁGINA
 
 0. Borrar entorno virtual si es que da problemas:
 
 Abre la terminal y ejecuta (desde la carpeta de tu proyecto):
 
-    rmdir /s /q venv
+    Remove-Item -Recurse -Force venv
 
 1. Crear un entorno virtual
 
@@ -43,3 +45,4 @@ python manage.py migrate
 ## POBLADO DE TABLAS
 
 python manage.py loaddata datos.json
+
