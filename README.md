@@ -1,7 +1,7 @@
 # integraci-n-ev_2
 repositorio para lo de integracion
 
-#
+# DJANGO_WEB
 
 ## ENTORNO VIRTUAL Y LEVANTAR PÁGINA
 
@@ -46,3 +46,8 @@ python manage.py migrate
 
 python manage.py loaddata datos.json
 
+# API_WEBSERVICES
+
+1. Correr app.py
+2. Correr config.py
+3. Levantar main.py en una terminal aparte de la terminal que levantó la web django.
