@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block contenido %}
+
+
 <h1>Listado de Sucursales y Stock de Productos</h1>
 
 {% for local in locales %}
@@ -18,6 +20,7 @@
                     <th>Precio</th>
                     <th>Cantidad en stock</th>
                     <th>Acciones</th>
+                    <th>Opciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,6 +32,13 @@
                     <td>${{ stock.producto.precio }}</td>
                     <td>{{ stock.cantidad }}</td>
                     <td>
+                        <a href="{% url 'modificar' stock.producto.id_producto %}">Modificar</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'eliminar_producto' stock.producto.id_producto %}">Eliminar</a>
+                    </td>
+                    <!--
+                    <td>
                         <form action="{% url 'agregar_stock' stock.id %}" method="post" style="display:inline;">
                             {% csrf_token %}
                             <button type="submit">➕</button>
@@ -38,6 +48,7 @@
                             <button type="submit">➖</button>
                         </form>
                     </td>
+                    -->
                 </tr>
                 {% endfor %}
             </tbody>

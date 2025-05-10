@@ -51,3 +51,9 @@ python manage.py loaddata datos.json
 1. Correr app.py
 2. Correr config.py
 3. Levantar main.py en una terminal aparte de la terminal que levantó la web django.
+
+#ADMIN
+<!-- admin
+usuario: Admin
+contraseña: 9j/&2tR3
+correo: fab.gonzaleza@duocuc.cl -->

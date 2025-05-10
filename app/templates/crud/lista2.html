@@ -1,0 +1,31 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block js %}
+{% endblock %}
+
+{% block css %}
+{% endblock %}
+
+{% block contenido %}
+
+{% load humanize %}
+<h2>Productos</h2>
+<div>
+    {% for p in productos %}
+    <div>
+        {% if p.imagen %}
+        <img src="{{ p.imagen.url }}" alt="imagen_venta">
+        {% endif %}
+        <div>
+            {{p.nombre |title }}
+            {{p.precio | intcomma }}
+        </div>
+        <div>
+            
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

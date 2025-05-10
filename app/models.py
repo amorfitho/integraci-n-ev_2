@@ -8,6 +8,16 @@ class FamiliaProducto(models.Model):
 
     def __str__(self):
         return self.nombre_familia
+    
+class Proveedor(models.Model):
+    id_proveedor = models.AutoField(primary_key=True)
+    nombre_proveedor=models.CharField(max_length=80)
+    descripcion = models.TextField(blank=True)
+    telefono_proveedor=models.CharField(max_length=80)
+    direccion_proveedor=models.CharField(max_length=120)
+
+    def __str__(self):
+        return self.nombre_proveedor
 
 
 class Producto(models.Model):
@@ -16,6 +26,8 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=150)
     precio = models.IntegerField()
     descripcion = models.TextField(blank=True)
+    fecha_fabricacion = models.DateField(null=True, blank=True)
+    imagen = models.ImageField(upload_to="productos", null=True)
 
     def __str__(self):
         return self.nombre
@@ -58,3 +70,4 @@ class Stock(models.Model):
 
     def __str__(self):
         return f'{self.producto.nombre} - {self.local.nombre_local} - {self.cantidad} disponibles'
+
