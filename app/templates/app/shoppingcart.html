@@ -1,0 +1,134 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block js %}
+<script src="{% static 'app/js/sc.js' %}"></script> 
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'app/css/sc.css' %}">
+<link rel="stylesheet" href="{% static 'app/css/style.css' %}">
+{% endblock %}
+
+{% block contenido %}
+
+<div>
+   <div class="navbar-main">
+      <div class="logo">
+          <img src="{% static 'app/image/car.png' %}" alt="logo" height="60px">Autoparts
+      </div>
+      <div class="acnt">
+         <div><a href=""><img src="{% static 'app/image/account.png' %}" alt="" width="30px"></a></div>
+      </div>
+      <div class="lateral-bar">
+         <div><a href="{% url 'home' %}"><img src="{% static 'app/image/home.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'shoppingcart' %}"><img src="{% static 'app/image/shoppingcart.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'agregar' %}"><img src="{% static 'app/image/addproduct.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'lista2' %}"><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
+     </div>
+  </div>
+</div>
+<main class="page">
+        <section class="shopping-cart">
+            <div class="container">
+                <div class="block-heading">
+                <div class="content">
+                    <div class="row">
+                        <div class="col-md-12 col-lg-8">
+                            <div class="items">
+                                <div class="product">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <img class="img-fluid mx-auto d-block image" src="{% static 'app/image/plumilla.png' %}">
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="info">
+                                                <div class="row">
+                                                    <div class="col-md-5 product-name">
+                                                        <div class="product-name">
+                                                            <a href="#">Plumilla limpia parabrisas</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 quantity">
+                                                        <label for="quantity">Quantity:</label>
+                                                        <input id="quantity" type="number" value="1" class="form-control quantity-input">
+                                                    </div>
+                                                    <div class="col-md-3 price">
+                                                        <span data-unit-price="12.00">$12.00</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="product">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <img class="img-fluid mx-auto d-block image" src="{% static 'app/image/neumatico.png' %}">
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="info">
+                                                <div class="row">
+                                                    <div class="col-md-5 product-name">
+                                                        <div class="product-name">
+                                                            <a href="#">Neumatico 185/65R14 HANKOOK H724 ARO 14 </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 quantity">
+                                                        <label for="quantity">Quantity:</label>
+                                                        <input id="quantity" type="number" value="1" class="form-control quantity-input">
+                                                    </div>
+                                                    <div class="col-md-3 price">
+                                                        <span data-unit-price="39.00">$39.00</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="product">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <img class="img-fluid mx-auto d-block image" src="{% static 'app/image/aspiradora.png' %}">
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="info">
+                                                <div class="row">
+                                                    <div class="col-md-5 product-name">
+                                                        <div class="product-name">
+                                                            <a href="#">Aspiradora para Auto Portatil 12V 60W</a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-4 quantity">
+                                                        <label for="quantity">Quantity:</label>
+                                                        <input id="quantity" type="number" value="1" class="form-control quantity-input">
+                                                    </div>
+                                                    <div class="col-md-3 price">
+                                                        <span data-unit-price="24.40">$24.40</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                         
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-lg-4">
+                            <div class="summary">
+                                <h3>Summary</h3>
+                                <div class="summary-item subtotal"><span class="text">Subtotal</span><span class="price">$0.00</span></div>
+                                <div class="summary-item"><span class="text">Discount</span><span class="price">$0.00</span></div>
+                                <div class="summary-item"><span class="text">Shipping</span><span class="price">$0.00</span></div>
+                                <div class="summary-item total"><span class="text">Total</span><span class="price">$0.00</span></div>
+                                <button type="button" class="btn btn-primary btn-lg btn-block">Checkout</button>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div>
+        </section>
+    </main>
+
+{% endblock %}
+

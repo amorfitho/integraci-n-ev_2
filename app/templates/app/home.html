@@ -19,10 +19,10 @@
          <div><a href=""><img src="{% static 'app/image/account.png' %}" alt="" width="30px"></a></div>
       </div>
       <div class="lateral-bar">
-         <div><a href=""><img src="{% static 'app/image/home.png' %}" alt="" width="30px"></a></div>
-         <div><a href=""><img src="{% static 'app/image/shoppingcart.png' %}" alt="" width="30px"></a></div>
-         <div><a href=""><img src="{% static 'app/image/addproduct.png' %}" alt="" width="30px"></a></div>
-         <div><a href=""><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'home' %}"><img src="{% static 'app/image/home.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'shoppingcart' %}"><img src="{% static 'app/image/shoppingcart.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'agregar' %}"><img src="{% static 'app/image/addproduct.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'lista2' %}"><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
      </div>
   </div>
 </div>

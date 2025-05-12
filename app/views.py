@@ -77,3 +77,6 @@ def eliminar_producto (request,id_producto):
     producto = get_object_or_404(Producto,pk=id_producto)
     producto.delete()
     return redirect(to="sucursales_y_stock")
+
+def shoppingcart (request):
+    return render (request, 'app/shoppingcart.html')

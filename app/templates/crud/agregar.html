@@ -5,20 +5,38 @@
 {% endblock %}
 
 {% block css %}
+<link rel="stylesheet" href="{% static 'app/css/add.css' %}">
 {% endblock %}
 
 {% block contenido %}
 
-<div>
-    <form action="" method="post" enctype="multipart/form-data" >
-
+    <div class="navbar-main" style="top: 0;">
+      <div class="logo">
+          <img src="{% static 'app/image/car.png' %}" alt="logo" height="60px">Autoparts
+      </div>
+      <div class="acnt">
+         <div><a href=""><img src="{% static 'app/image/account.png' %}" alt="" width="30px"></a></div>
+      </div>
+      <div class="lateral-bar">
+         <div><a href="{% url 'home' %}"><img src="{% static 'app/image/home.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'shoppingcart' %}"><img src="{% static 'app/image/shoppingcart.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'agregar' %}"><img src="{% static 'app/image/addproduct.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'lista2' %}"><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
+     </div>
+  </div>
+  <div class="form" style="justify-content: center; align-items: center; margin-top: 100px;">
+    <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         {{ form }}
-        <div class="justify-content-end">
-            <imput type="reset" value="cancelar" class="buttom"> cancelar </imput>
-            <imput type="submit" value="Guardar" class="buttom"> Guardar </imput>
+        <div class="button-container">
+            <input type="reset" value="Cancelar" class="button cancel">
+            <input type="submit" value="Guardar" class="button save">
         </div>
     </form>
-</div>
+  </div>
+    
+
+
+
 
 {% endblock %}

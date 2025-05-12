@@ -1,31 +1,46 @@
 {% extends 'app/base.html' %}
 {% load static %}
-
-{% block js %}
-{% endblock %}
+{% load humanize %}
 
 {% block css %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link rel="stylesheet" href="{% static 'app/css/edit.css' %}">
 {% endblock %}
 
 {% block contenido %}
-
-{% load humanize %}
-<h2>Productos</h2>
-<div>
-    {% for p in productos %}
-    <div>
-        {% if p.imagen %}
-        <img src="{{ p.imagen.url }}" alt="imagen_venta">
-        {% endif %}
-        <div>
-            {{p.nombre |title }}
-            {{p.precio | intcomma }}
+<div class="navbar-main" style="top: 0;">
+      <div class="logo">
+          <img src="{% static 'app/image/car.png' %}" alt="logo" height="60px">Autoparts
+      </div>
+      <div class="acnt">
+         <div><a href=""><img src="{% static 'app/image/account.png' %}" alt="" width="30px"></a></div>
+      </div>
+      <div class="lateral-bar">
+         <div><a href="{% url 'home' %}"><img src="{% static 'app/image/home.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'shoppingcart' %}"><img src="{% static 'app/image/shoppingcart.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'agregar' %}"><img src="{% static 'app/image/addproduct.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'lista2' %}"><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
+     </div>
+  </div>
+<div class="container my-4 pt-5"> 
+    <h2 class="text-center my-4">Productos</h2>
+    <div class="product-grid">
+        {% for p in productos %}
+        <div class="product-card">
+            {% if p.imagen %}
+            <img src="{{ p.imagen.url }}" alt="imagen_venta" class="product-image">
+            {% else %}
+            <img src="{% static 'img/default-product.jpg' %}" alt="Sin imagen" class="product-image">
+            {% endif %}
+            <div class="product-details">
+                <div class="product-name">{{ p.nombre|title }}</div>
+                <div class="product-price">${{ p.precio|intcomma }}</div>
+            </div>
         </div>
-        <div>
-            
-        </div>
+        {% empty %}
+        <p class="text-muted">No hay productos disponibles.</p>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
 
 {% endblock %}
