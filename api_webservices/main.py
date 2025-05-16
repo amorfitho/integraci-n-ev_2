@@ -166,6 +166,64 @@ def reducir_stock():
     finally:
         conn.close()
 
+# MÉTODOS PARA Consultar Stock / control stock
+@app.route('/stock/producto/<int:producto_id>', methods=['GET'])
+def consultar_stock_producto(producto_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT p.nombre AS producto, p.stock_minimo, l.nombre_local, s.cantidad
+            FROM app_stock s
+            JOIN app_producto p ON s.producto_id = p.id_producto
+            JOIN app_local l ON s.local_id = l.id_local
+            WHERE p.id_producto = ?
+        """, (producto_id,))
+        rows = cursor.fetchall()
+        if not rows:
+            return jsonify({'message': 'No se encontró stock para este producto'}), 404
+
+        data = []
+        for row in rows:
+            alerta = row["cantidad"] < row["stock_minimo"]
+            data.append({
+                "producto": row["producto"],
+                "local": row["nombre_local"],
+                "cantidad": row["cantidad"],
+                "stock_minimo": row["stock_minimo"],
+                "alerta": alerta
+            })
+
+        return jsonify(data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+# MÉTODO PARA Consultar productos
+@app.route('/producto/<int:producto_id>', methods=['GET'])
+def obtener_producto_por_id(producto_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT p.id_producto, p.nombre, p.precio, p.descripcion, 
+                    p.stock_minimo, f.nombre_familia
+            FROM app_producto p
+            JOIN app_familiaproducto f ON p.familia_id = f.id_familia
+            WHERE p.id_producto = ?
+        """, (producto_id,))
+        row = cursor.fetchone()
+        if row is None:
+            return jsonify({'message': f'Producto con id {producto_id} no encontrado'}), 404
+        
+        data = dict(row)
+        return jsonify(data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
 @app.route('/producto/<int:id_producto>', methods=['DELETE'])
 def delete_producto(id_producto):
     ...
@@ -180,5 +238,8 @@ def showMessage(error=None):
     respone.status_code = 404
     return respone
         
+# if __name__ == "__main__":
+#     app.run()
+
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", port=5000)

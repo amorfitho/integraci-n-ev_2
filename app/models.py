@@ -28,6 +28,7 @@ class Producto(models.Model):
     descripcion = models.TextField(blank=True)
     fecha_fabricacion = models.DateField(null=True, blank=True)
     imagen = models.ImageField(upload_to="productos", null=True)
+    # stock_minimo = models.PositiveIntegerField(default=5)
 
     def __str__(self):
         return self.nombre

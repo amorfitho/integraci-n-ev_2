@@ -5,3 +5,9 @@ Se espera algo como en el body raw (JSON):
   "local_id": 1,
   "cantidad": 5
 }
+
+Consultar stock y control de inventario:
+GET a http://127.0.0.1:5000/stock/producto/2 para consultar stock
+
+Consultar producto
+GET a http://localhost:5000/producto/3 -> CAMBIAR LOCALHOST POR IP REAL (Dirección IPv4)
