@@ -52,6 +52,13 @@ python manage.py loaddata datos.json
 2. Correr config.py
 3. Levantar main.py en una terminal aparte de la terminal que levantó la web django.
 
+## PARA VERLA DESDE OTRO PC
+
+1. ython manage.py runserver 0.0.0.0:8000 -> levantar así django web
+2. python main.py -> levanta así main.py de api_webservices
+
+Consultas ya no serian así: http://localhost:5000/producto/3, si no que consultas serían de esta nueva forma: http://IPv4:5000/producto/3
+
 #ADMIN
 <!-- admin
 usuario: Admin
