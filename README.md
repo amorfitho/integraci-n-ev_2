@@ -57,7 +57,7 @@ python manage.py loaddata datos.json
 1. ython manage.py runserver 0.0.0.0:8000 -> levantar así django web
 2. python main.py -> levanta así main.py de api_webservices
 
-Consultas ya no serian así: http://localhost:5000/producto/3, si no que consultas serían de esta nueva forma: http://IPv4:5000/producto/3
+Consultas ya no serian así: http://localhost:5000/producto/3, si no que consultas serían de esta nueva forma: http://IPv4:5000/producto/3 (ipconfig)
 
 #ADMIN
 <!-- admin
