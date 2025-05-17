@@ -1,42 +1,66 @@
 .product-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        justify-content: center;
-    }
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
 
-    .product-card {
-        width: 300px;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        overflow: hidden;
-        background-color: #fff;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        transition: transform 0.2s;
-    }
+.product-card {
+    width: 300px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
 
-    .product-card:hover {
-        transform: translateY(-5px);
-    }
+.product-card:hover {
+    transform: translateY(-5px);
+}
 
-    .product-image {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-    }
+.product-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
 
-    .product-details {
-        padding: 15px;
-    }
+.product-details {
+    padding: 15px;
+}
 
-    .product-name {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin-bottom: 10px;
-    }
+.product-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
 
-    .product-price {
-        font-size: 1.1rem;
-        color: #28a745;
-        font-weight: bold;
-    }
+.product-price {
+    font-size: 1.1rem;
+    color: #28a745;
+    font-weight: bold;
+}
+
+.product-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.button {
+    background-color: #fca966; /* color de fondo visible */
+    color: white;              /* texto visible */
+    border: none;
+    padding: 8px 16px;         /* tamaño cómodo */
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;     /* que se muestren */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #f3872e;
+    color: white;
+}

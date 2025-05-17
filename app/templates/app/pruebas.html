@@ -1,0 +1,52 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prueba Botones</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .product-actions {
+            margin-top: 10px;
+        }
+
+        .button {
+            background-color: #fca966;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            display: inline-block;
+        }
+
+        .button:hover {
+            background-color: #f3872e;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container my-5">
+        {% for p in productos %}
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">{{ p.nombre }}</h5>
+                    <p class="card-text">${{ p.precio }}</p>
+                    
+                    {% if p.stock_id %}
+                    <div class="product-actions">
+                        <a href="{% url 'modificar' p.stock_id %}" class="button edit">Modificar</a>
+                        <a href="{% url 'eliminar_producto' p.id_producto %}" class="button eliminar_producto">Eliminar</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p>No hay productos disponibles.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

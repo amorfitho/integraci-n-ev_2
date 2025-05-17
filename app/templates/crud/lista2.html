@@ -25,22 +25,31 @@
 <div class="container my-4 pt-5"> 
     <h2 class="text-center my-4">Productos</h2>
     <div class="product-grid">
-        {% for p in productos %}
-        <div class="product-card">
-            {% if p.imagen %}
-            <img src="{{ p.imagen.url }}" alt="imagen_venta" class="product-image">
-            {% else %}
-            <img src="{% static 'img/default-product.jpg' %}" alt="Sin imagen" class="product-image">
-            {% endif %}
-            <div class="product-details">
-                <div class="product-name">{{ p.nombre|title }}</div>
-                <div class="product-price">${{ p.precio|intcomma }}</div>
-            </div>
-        </div>
-        {% empty %}
-        <p class="text-muted">No hay productos disponibles.</p>
-        {% endfor %}
+    {% for stock in stocks %}
+  <div class="product-card">
+    {% if stock.producto.imagen %}
+        <img src="{{ stock.producto.imagen.url }}" alt="{{ stock.producto.nombre }}" class="product-image">
+    {% else %}
+        <img src="{% static 'app/image/default-product.jpg' %}" alt="Imagen por defecto" class="product-image">
+    {% endif %}
+
+    <div class="product-details">
+      <div class="product-name">{{ stock.producto.nombre }}</div>
+      <div class="product-price">${{ stock.producto.precio }}</div>
+      <div>Cantidad: {{ stock.cantidad }}</div>
+
+      <div class="product-actions">
+        <a href="{% url 'modificar' stock.id %}" class="button edit">Modificar</a>
+        <a href="{% url 'eliminar_stock' stock.id %}" class="button eliminar_producto">Eliminar Stock</a>
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <p>No hay stocks disponibles.</p>
+    {% endfor %}
     </div>
 </div>
+
+
 
 {% endblock %}
