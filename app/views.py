@@ -3,23 +3,17 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .models import Local, Stock,Producto
 from .forms import ProductoForm
 
-# Create your views here.
-
-# def "nombre de direccion"(tipo request):
-#   return render(requet, "direccion de la carpeta")
 def home(request):
     return render(request, 'app/home.html')
-#lista pero de la otra forma
+
 def lista2(request):
     stocks = Stock.objects.select_related('producto', 'local').all()
     return render(request, 'crud/lista2.html', {'stocks': stocks})
 
-# Esto carga cada Local y sus Stock relacionados, incluyendo cada Producto asociado
-
 def sucursales_y_stock(request):
     locales = Local.objects.prefetch_related('stocks__producto').all()
     stocks = Stock.objects.select_related('producto', 'local').all()
-    return render(request, 'crud/lista2.html', {'stocks': stocks})
+    return render(request, 'crud/lista.html', {'stocks': stocks})
 
 def agregar(request):
     if request.method == 'POST':
@@ -46,7 +40,7 @@ def rebajar_stock(request, stock_id):
 #modificar
 def modificar(request, stock_id):
     stock = get_object_or_404(Stock, id=stock_id)
-    producto = stock.producto  # obtenemos el producto relacionado al stock
+    producto = stock.producto  
 
     if request.method == 'POST':
         formulario = ProductoForm(request.POST, request.FILES, instance=producto)
@@ -68,10 +62,8 @@ def eliminar_producto (request,id_producto):
 def shoppingcart (request):
     return render (request, 'app/shoppingcart.html')
 
-def pruebas (request):
-    return render (request, 'app/pruebas.html')
-
 def eliminar_stock(request, stock_id):
     stock = get_object_or_404(Stock, id=stock_id)
     stock.delete()
     return redirect('lista')
+
