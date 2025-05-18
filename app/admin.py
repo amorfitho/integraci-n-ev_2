@@ -4,8 +4,8 @@ from .models import Producto, Proveedor, FamiliaProducto, Local
 # Register your models here.
 
 class ProdctoAdmin(admin.ModelAdmin):
-    list_display = ["nombre","familia","precio"]
-    list_filter =["familia","precio"] 
+    list_display = ["nombre", "familia", "precio_minorista", "precio_mayorista"]
+    list_filter = ["familia", "precio_minorista"]
 
 
 

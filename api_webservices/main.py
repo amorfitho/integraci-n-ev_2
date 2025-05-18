@@ -9,7 +9,7 @@ def get_productos():
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT p.id_producto, p.nombre, p.precio, p.descripcion, f.nombre_familia 
+            SELECT p.id_producto, p.nombre, p.precio_minorista, p.precio_mayorista, p.descripcion, f.nombre_familia 
             FROM app_producto p 
             JOIN app_familiaproducto f ON p.familia_id = f.id_familia
         """)
@@ -200,14 +200,14 @@ def consultar_stock_producto(producto_id):
     finally:
         conn.close()
 
-# MÉTODO PARA Consultar productos
-@app.route('/producto/<int:producto_id>', methods=['GET'])
-def obtener_producto_por_id(producto_id):
+# MÉTODO PARA Consultar productos B2C
+@app.route('/producto/b2c/<int:producto_id>', methods=['GET'])
+def obtener_producto_por_id_b2c(producto_id):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
         cursor.execute("""
-            SELECT p.id_producto, p.nombre, p.precio, p.descripcion, 
+            SELECT p.id_producto, p.nombre, p.precio_minorista, p.descripcion, 
                     p.stock_minimo, f.nombre_familia
             FROM app_producto p
             JOIN app_familiaproducto f ON p.familia_id = f.id_familia
@@ -224,6 +224,31 @@ def obtener_producto_por_id(producto_id):
     finally:
         conn.close()
 
+# MÉTODO PARA Consultar productos B2B
+@app.route('/producto/b2b/<int:producto_id>', methods=['GET'])
+def obtener_producto_por_id_b2b(producto_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT p.id_producto, p.nombre, p.precio_mayorista, p.descripcion, 
+                    p.stock_minimo, f.nombre_familia
+            FROM app_producto p
+            JOIN app_familiaproducto f ON p.familia_id = f.id_familia
+            WHERE p.id_producto = ?
+        """, (producto_id,))
+        row = cursor.fetchone()
+        if row is None:
+            return jsonify({'message': f'Producto con id {producto_id} no encontrado'}), 404
+        
+        data = dict(row)
+        return jsonify(data), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+# MÉTODO PARA BORRAR PRODUCTO
 @app.route('/producto/<int:id_producto>', methods=['DELETE'])
 def delete_producto(id_producto):
     ...

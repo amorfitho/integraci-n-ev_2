@@ -24,12 +24,19 @@ class Producto(models.Model):
     id_producto = models.AutoField(primary_key=True)
     familia = models.ForeignKey(FamiliaProducto, on_delete=models.CASCADE, related_name='productos')
     nombre = models.CharField(max_length=150)
-    precio = models.IntegerField()
+    
+    precio_minorista = models.IntegerField()
+    precio_mayorista = models.IntegerField(default=0)
+
     descripcion = models.TextField(blank=True)
     fecha_fabricacion = models.DateField(null=True, blank=True)
-    imagen = models.ImageField(upload_to="productos", null=True)
-    # stock_minimo = models.PositiveIntegerField(default=5)
+    imagen = models.ImageField(upload_to="productos", null=True, blank=True)
 
+    stock_minimo = models.PositiveIntegerField(default=5)
+
+    class Meta:
+        db_table = 'app_producto'  # asegura que Django use tabla existente
+    
     def __str__(self):
         return self.nombre
     
