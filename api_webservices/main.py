@@ -206,6 +206,8 @@ def obtener_producto_por_id_b2c(producto_id):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        
+        # Obtener datos del producto
         cursor.execute("""
             SELECT p.id_producto, p.nombre, p.precio_minorista, p.descripcion, 
                     p.stock_minimo, f.nombre_familia
@@ -216,8 +218,17 @@ def obtener_producto_por_id_b2c(producto_id):
         row = cursor.fetchone()
         if row is None:
             return jsonify({'message': f'Producto con id {producto_id} no encontrado'}), 404
-        
         data = dict(row)
+
+        # Obtener stock por local (aunque sea 0)
+        cursor.execute("""
+            SELECT l.nombre_local, COALESCE(s.cantidad, 0) AS cantidad
+            FROM app_local l
+            LEFT JOIN app_stock s ON l.id_local = s.local_id AND s.producto_id = ?
+        """, (producto_id,))
+        stock_rows = cursor.fetchall()
+        data['stock_por_local'] = [dict(stock) for stock in stock_rows]
+
         return jsonify(data), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -230,6 +241,8 @@ def obtener_producto_por_id_b2b(producto_id):
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
+        
+        # Obtener datos del producto
         cursor.execute("""
             SELECT p.id_producto, p.nombre, p.precio_mayorista, p.descripcion, 
                     p.stock_minimo, f.nombre_familia
@@ -240,8 +253,17 @@ def obtener_producto_por_id_b2b(producto_id):
         row = cursor.fetchone()
         if row is None:
             return jsonify({'message': f'Producto con id {producto_id} no encontrado'}), 404
-        
         data = dict(row)
+
+        # Obtener stock por local (aunque sea 0)
+        cursor.execute("""
+            SELECT l.nombre_local, COALESCE(s.cantidad, 0) AS cantidad
+            FROM app_local l
+            LEFT JOIN app_stock s ON l.id_local = s.local_id AND s.producto_id = ?
+        """, (producto_id,))
+        stock_rows = cursor.fetchall()
+        data['stock_por_local'] = [dict(stock) for stock in stock_rows]
+
         return jsonify(data), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
