@@ -277,6 +277,7 @@ def delete_producto(id_producto):
     ...
 
 # MÉTODOS PARA EL CARRITO
+# MÉTODO PARA CREAR CARRITO
 @app.route('/carrito/crear', methods=['POST'])
 def crear_carrito():
     try:
@@ -497,6 +498,49 @@ def quitar_producto_del_carrito(carrito_id):
         return jsonify({'error': str(e)}), 500
     finally:
         conn.close()
+
+# MÉTODO PARA VER CARRITO
+@app.route('/carrito/<int:carrito_id>', methods=['GET'])
+def ver_carrito(carrito_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Verificar si el carrito existe
+        cursor.execute("""
+            SELECT id_carrito, usuario_rut, tipo_cliente, estado, fecha_creacion, total_carrito
+            FROM app_carrito
+            WHERE id_carrito = ?
+        """, (carrito_id,))
+        carrito = cursor.fetchone()
+        if not carrito:
+            return jsonify({'error': f'Carrito {carrito_id} no existe'}), 404
+
+        carrito_data = dict(carrito)
+
+        # Obtener productos en el carrito
+        cursor.execute("""
+            SELECT 
+                p.nombre AS nombre_producto,
+                ci.producto_id,
+                ci.cantidad,
+                ci.precio_unitario,
+                (ci.cantidad * ci.precio_unitario) AS subtotal
+            FROM app_carrito_item ci
+            JOIN app_producto p ON p.id_producto = ci.producto_id
+            WHERE ci.carrito_id = ?
+        """, (carrito_id,))
+        productos = [dict(row) for row in cursor.fetchall()]
+
+        carrito_data["productos"] = productos
+
+        return jsonify(carrito_data), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
 
 @app.errorhandler(404)
 def showMessage(error=None):

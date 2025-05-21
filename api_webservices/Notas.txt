@@ -16,7 +16,7 @@ Consultar producto b2b
 GET a http://localhost:5000/producto/b2b/3 -> CAMBIAR LOCALHOST POR IP REAL (Dirección IPv4)
 
 Crear carrito
-http://IPv4:5000/carrito/crear
+POST a http://IPv4:5000/carrito/crear
 Se espera algo como en el body raw (JSON):
 {
   "usuario_rut": 12345678,
@@ -24,7 +24,7 @@ Se espera algo como en el body raw (JSON):
 }
 
 Agregar productos al carrito
-http://IPv4:5000/carrito/ID_CARRITO/agregar_producto
+POST a http://IPv4:5000/carrito/ID_CARRITO/agregar_producto
 Se espera algo como en el body raw (JSON):
 {
   "producto_id": 16,
@@ -32,9 +32,12 @@ Se espera algo como en el body raw (JSON):
 }
 
 Quitar productos del carrito
-http://IPv4:5000/carrito/1/quitar_producto
+POST a http://IPv4:5000/carrito/ID_CARRITO/quitar_producto
 Se espera algo como en el body raw (JSON):
 {
   "producto_id": 16,
   "cantidad": 1
 }
+
+Ver detalle de un carrito
+GET a http://IPv4:5000/carrito/ID_CARRITO
