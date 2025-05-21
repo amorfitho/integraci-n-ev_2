@@ -14,3 +14,19 @@ GET a http://localhost:5000/producto/b2c/3 -> CAMBIAR LOCALHOST POR IP REAL (Dir
 
 Consultar producto b2b
 GET a http://localhost:5000/producto/b2b/3 -> CAMBIAR LOCALHOST POR IP REAL (Dirección IPv4)
+
+Crear carrito
+http://IPv4:5000/carrito/crear
+Se espera algo como en el body raw (JSON):
+{
+  "usuario_rut": 12345678,
+  "tipo_cliente": "b2b"
+}
+
+Agregar productos al carrito
+http://IPv4:5000/carrito/ID_CARRITO/agregar_producto
+Se espera algo como en el body raw (JSON):
+{
+  "producto_id": 16,
+  "cantidad": 1
+}
