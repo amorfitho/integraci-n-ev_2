@@ -323,7 +323,7 @@ def crear_carrito():
     finally:
         conn.close()
 
-# MÉTODO PARA AGREGAR PRODUCTOS
+# MÉTODO PARA AGREGAR PRODUCTOS AL CARRITO
 @app.route('/carrito/<int:carrito_id>/agregar_producto', methods=['POST'])
 def agregar_producto_a_carrito(carrito_id):
     try:
@@ -426,6 +426,72 @@ def agregar_producto_a_carrito(carrito_id):
 
         conn.commit()
         return jsonify({'message': mensaje}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+# MÉTODO PARA QUITAR PRODUCTOS DEL CARRITO
+@app.route('/carrito/<int:carrito_id>/quitar_producto', methods=['POST'])
+def quitar_producto_del_carrito(carrito_id):
+    try:
+        data = request.json
+        producto_id = data.get('producto_id')
+        cantidad_quitar = int(data.get('cantidad', 1))
+
+        if not producto_id or cantidad_quitar <= 0:
+            return jsonify({'error': 'producto_id y cantidad deben ser válidos'}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Verificar que el producto esté en el carrito
+        cursor.execute("""
+            SELECT id_item, cantidad FROM app_carrito_item
+            WHERE carrito_id = ? AND producto_id = ?
+        """, (carrito_id, producto_id))
+        item = cursor.fetchone()
+
+        if not item:
+            return jsonify({'error': f'Producto {producto_id} no está en el carrito'}), 404
+
+        cantidad_actual = item['cantidad']
+        id_item = item['id_item']
+
+        if cantidad_quitar >= cantidad_actual:
+            # Eliminar el producto del carrito
+            cursor.execute("""
+                DELETE FROM app_carrito_item
+                WHERE id_item = ?
+            """, (id_item,))
+            mensaje = 'Producto eliminado completamente del carrito'
+        else:
+            # Reducir la cantidad
+            nueva_cantidad = cantidad_actual - cantidad_quitar
+            cursor.execute("""
+                UPDATE app_carrito_item
+                SET cantidad = ?
+                WHERE id_item = ?
+            """, (nueva_cantidad, id_item))
+            mensaje = f'Se redujo la cantidad del producto a {nueva_cantidad}'
+
+        # Recalcular el total del carrito
+        cursor.execute("""
+            SELECT SUM(cantidad * precio_unitario) AS total
+            FROM app_carrito_item
+            WHERE carrito_id = ?
+        """, (carrito_id,))
+        nuevo_total = cursor.fetchone()['total'] or 0
+
+        cursor.execute("""
+            UPDATE app_carrito
+            SET total_carrito = ?
+            WHERE id_carrito = ?
+        """, (nuevo_total, carrito_id))
+
+        conn.commit()
+        return jsonify({'message': mensaje, 'total_carrito_actualizado': nuevo_total}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500

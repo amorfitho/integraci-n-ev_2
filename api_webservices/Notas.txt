@@ -30,3 +30,11 @@ Se espera algo como en el body raw (JSON):
   "producto_id": 16,
   "cantidad": 1
 }
+
+Quitar productos del carrito
+http://IPv4:5000/carrito/1/quitar_producto
+Se espera algo como en el body raw (JSON):
+{
+  "producto_id": 16,
+  "cantidad": 1
+}
