@@ -64,3 +64,13 @@ Consultas ya no serian así: http://localhost:5000/producto/3, si no que consult
 usuario: Admin
 contraseña: 9j/&2tR3
 correo: fab.gonzaleza@duocuc.cl -->
+
+
+
+
+
+# NOTAS BD
+## BORRAR REGISTROS CON SCRIPT SQL
+DELETE FROM app_carrito_item;
+DELETE FROM app_carrito;
+COMMIT;

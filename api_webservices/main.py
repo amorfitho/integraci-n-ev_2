@@ -371,15 +371,123 @@ def crear_carrito():
         conn.close()
 
 # MÉTODO PARA AGREGAR PRODUCTOS AL CARRITO
+# @app.route('/carrito/<int:carrito_id>/agregar_producto', methods=['POST'])
+# def agregar_producto_a_carrito(carrito_id):
+#     try:
+#         data = request.json
+#         producto_id = data.get('producto_id')
+#         cantidad_nueva = int(data.get('cantidad', 1))
+
+#         if not producto_id or cantidad_nueva <= 0:
+#             return jsonify({'error': 'producto_id y cantidad deben ser válidos'}), 400
+
+#         conn = get_db_connection()
+#         cursor = conn.cursor()
+
+#         # Verificar que el carrito esté abierto y recuperar tipo_cliente
+#         cursor.execute("""
+#             SELECT tipo_cliente FROM app_carrito
+#             WHERE id_carrito = ? AND estado = 'abierto'
+#         """, (carrito_id,))
+#         carrito = cursor.fetchone()
+#         if not carrito:
+#             return jsonify({'error': f'Carrito {carrito_id} no existe o no está abierto'}), 404
+#         tipo_cliente = carrito['tipo_cliente']
+
+#         # Verificar que el producto exista y obtener el precio correcto
+#         if tipo_cliente == 'b2b':
+#             cursor.execute("SELECT precio_mayorista FROM app_producto WHERE id_producto = ?", (producto_id,))
+#         else:
+#             cursor.execute("SELECT precio_minorista FROM app_producto WHERE id_producto = ?", (producto_id,))
+#         producto = cursor.fetchone()
+#         if not producto:
+#             return jsonify({'error': f'Producto {producto_id} no existe'}), 404
+
+#         precio_unitario = producto[0]
+
+#         # Verificar stock total disponible
+#         cursor.execute("""
+#             SELECT SUM(cantidad) as stock_disponible
+#             FROM app_stock
+#             WHERE producto_id = ?
+#         """, (producto_id,))
+#         stock_data = cursor.fetchone()
+#         stock_disponible = stock_data['stock_disponible'] if stock_data['stock_disponible'] else 0
+
+#         # Verificar si ya está en el carrito
+#         cursor.execute("""
+#             SELECT id_item, cantidad FROM app_carrito_item
+#             WHERE carrito_id = ? AND producto_id = ?
+#         """, (carrito_id, producto_id))
+#         item_existente = cursor.fetchone()
+
+#         if item_existente:
+#             cantidad_anterior = item_existente['cantidad']
+#             nueva_cantidad_total = cantidad_anterior + cantidad_nueva
+
+#             if nueva_cantidad_total > stock_disponible:
+#                 return jsonify({
+#                     'error': f'Stock insuficiente. Total disponible: {stock_disponible}. Ya tienes {cantidad_anterior} en el carrito.'
+#                 }), 400
+
+#             # Actualizar la cantidad del producto en el carrito
+#             cursor.execute("""
+#                 UPDATE app_carrito_item
+#                 SET cantidad = ?
+#                 WHERE id_item = ?
+#             """, (nueva_cantidad_total, item_existente['id_item']))
+
+#             subtotal_anterior = cantidad_anterior * precio_unitario
+#             subtotal_nuevo = nueva_cantidad_total * precio_unitario
+#             diferencia_total = subtotal_nuevo - subtotal_anterior
+
+#             mensaje = f'Cantidad actualizada a {nueva_cantidad_total}'
+#         else:
+#             if cantidad_nueva > stock_disponible:
+#                 return jsonify({
+#                     'error': f'Stock insuficiente. Total disponible: {stock_disponible}.'
+#                 }), 400
+
+#             subtotal_nuevo = cantidad_nueva * precio_unitario
+#             diferencia_total = subtotal_nuevo
+
+#             cursor.execute("""
+#                 INSERT INTO app_carrito_item (carrito_id, producto_id, cantidad, precio_unitario)
+#                 VALUES (?, ?, ?, ?)
+#             """, (carrito_id, producto_id, cantidad_nueva, precio_unitario))
+
+#             mensaje = 'Producto agregado al carrito'
+
+#         # ✅ Recalcular total del carrito desde los ítems
+#         cursor.execute("""
+#             SELECT SUM(cantidad * precio_unitario) AS total FROM app_carrito_item
+#             WHERE carrito_id = ?
+#         """, (carrito_id,))
+#         nuevo_total = cursor.fetchone()['total'] or 0
+
+#         cursor.execute("""
+#             UPDATE app_carrito
+#             SET total_carrito = ?
+#             WHERE id_carrito = ?
+#         """, (nuevo_total, carrito_id))
+
+#         conn.commit()
+#         return jsonify({'message': mensaje}), 200
+
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
+#     finally:
+#         conn.close()
 @app.route('/carrito/<int:carrito_id>/agregar_producto', methods=['POST'])
 def agregar_producto_a_carrito(carrito_id):
     try:
         data = request.json
         producto_id = data.get('producto_id')
+        local_id = data.get('local_id')  # nuevo: debe indicarse el local desde donde se toma el stock
         cantidad_nueva = int(data.get('cantidad', 1))
 
-        if not producto_id or cantidad_nueva <= 0:
-            return jsonify({'error': 'producto_id y cantidad deben ser válidos'}), 400
+        if not producto_id or not local_id or cantidad_nueva <= 0:
+            return jsonify({'error': 'producto_id, local_id y cantidad deben ser válidos'}), 400
 
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -394,7 +502,7 @@ def agregar_producto_a_carrito(carrito_id):
             return jsonify({'error': f'Carrito {carrito_id} no existe o no está abierto'}), 404
         tipo_cliente = carrito['tipo_cliente']
 
-        # Verificar que el producto exista y obtener el precio correcto
+        # Verificar que el producto existe y obtener el precio correspondiente
         if tipo_cliente == 'b2b':
             cursor.execute("SELECT precio_mayorista FROM app_producto WHERE id_producto = ?", (producto_id,))
         else:
@@ -402,23 +510,21 @@ def agregar_producto_a_carrito(carrito_id):
         producto = cursor.fetchone()
         if not producto:
             return jsonify({'error': f'Producto {producto_id} no existe'}), 404
-
         precio_unitario = producto[0]
 
-        # Verificar stock total disponible
+        # Verificar stock disponible en ese local
         cursor.execute("""
-            SELECT SUM(cantidad) as stock_disponible
-            FROM app_stock
-            WHERE producto_id = ?
-        """, (producto_id,))
+            SELECT cantidad FROM app_stock
+            WHERE producto_id = ? AND local_id = ?
+        """, (producto_id, local_id))
         stock_data = cursor.fetchone()
-        stock_disponible = stock_data['stock_disponible'] if stock_data['stock_disponible'] else 0
+        stock_disponible = stock_data['cantidad'] if stock_data else 0
 
-        # Verificar si ya está en el carrito
+        # Verificar si ya existe en el carrito para ese local
         cursor.execute("""
             SELECT id_item, cantidad FROM app_carrito_item
-            WHERE carrito_id = ? AND producto_id = ?
-        """, (carrito_id, producto_id))
+            WHERE carrito_id = ? AND producto_id = ? AND local_id = ?
+        """, (carrito_id, producto_id, local_id))
         item_existente = cursor.fetchone()
 
         if item_existente:
@@ -427,7 +533,7 @@ def agregar_producto_a_carrito(carrito_id):
 
             if nueva_cantidad_total > stock_disponible:
                 return jsonify({
-                    'error': f'Stock insuficiente. Total disponible: {stock_disponible}. Ya tienes {cantidad_anterior} en el carrito.'
+                    'error': f'Stock insuficiente. Total disponible en el local: {stock_disponible}. Ya tienes {cantidad_anterior} en el carrito.'
                 }), 400
 
             # Actualizar la cantidad del producto en el carrito
@@ -436,29 +542,21 @@ def agregar_producto_a_carrito(carrito_id):
                 SET cantidad = ?
                 WHERE id_item = ?
             """, (nueva_cantidad_total, item_existente['id_item']))
+            mensaje = f'Cantidad actualizada a {nueva_cantidad_total} (local {local_id})'
 
-            subtotal_anterior = cantidad_anterior * precio_unitario
-            subtotal_nuevo = nueva_cantidad_total * precio_unitario
-            diferencia_total = subtotal_nuevo - subtotal_anterior
-
-            mensaje = f'Cantidad actualizada a {nueva_cantidad_total}'
         else:
             if cantidad_nueva > stock_disponible:
                 return jsonify({
-                    'error': f'Stock insuficiente. Total disponible: {stock_disponible}.'
+                    'error': f'Stock insuficiente. Total disponible en el local: {stock_disponible}.'
                 }), 400
 
-            subtotal_nuevo = cantidad_nueva * precio_unitario
-            diferencia_total = subtotal_nuevo
-
             cursor.execute("""
-                INSERT INTO app_carrito_item (carrito_id, producto_id, cantidad, precio_unitario)
-                VALUES (?, ?, ?, ?)
-            """, (carrito_id, producto_id, cantidad_nueva, precio_unitario))
+                INSERT INTO app_carrito_item (carrito_id, producto_id, cantidad, precio_unitario, local_id)
+                VALUES (?, ?, ?, ?, ?)
+            """, (carrito_id, producto_id, cantidad_nueva, precio_unitario, local_id))
+            mensaje = f'Producto agregado al carrito desde el local {local_id}'
 
-            mensaje = 'Producto agregado al carrito'
-
-        # ✅ Recalcular total del carrito desde los ítems
+        # Recalcular total del carrito
         cursor.execute("""
             SELECT SUM(cantidad * precio_unitario) AS total FROM app_carrito_item
             WHERE carrito_id = ?
@@ -472,7 +570,7 @@ def agregar_producto_a_carrito(carrito_id):
         """, (nuevo_total, carrito_id))
 
         conn.commit()
-        return jsonify({'message': mensaje}), 200
+        return jsonify({'message': mensaje, 'total_carrito': nuevo_total}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -480,28 +578,93 @@ def agregar_producto_a_carrito(carrito_id):
         conn.close()
 
 # MÉTODO PARA QUITAR PRODUCTOS DEL CARRITO
+# @app.route('/carrito/<int:carrito_id>/quitar_producto', methods=['POST'])
+# def quitar_producto_del_carrito(carrito_id):
+#     try:
+#         data = request.json
+#         producto_id = data.get('producto_id')
+#         cantidad_quitar = int(data.get('cantidad', 1))
+
+#         if not producto_id or cantidad_quitar <= 0:
+#             return jsonify({'error': 'producto_id y cantidad deben ser válidos'}), 400
+
+#         conn = get_db_connection()
+#         cursor = conn.cursor()
+
+#         # Verificar que el producto esté en el carrito
+#         cursor.execute("""
+#             SELECT id_item, cantidad FROM app_carrito_item
+#             WHERE carrito_id = ? AND producto_id = ?
+#         """, (carrito_id, producto_id))
+#         item = cursor.fetchone()
+
+#         if not item:
+#             return jsonify({'error': f'Producto {producto_id} no está en el carrito'}), 404
+
+#         cantidad_actual = item['cantidad']
+#         id_item = item['id_item']
+
+#         if cantidad_quitar >= cantidad_actual:
+#             # Eliminar el producto del carrito
+#             cursor.execute("""
+#                 DELETE FROM app_carrito_item
+#                 WHERE id_item = ?
+#             """, (id_item,))
+#             mensaje = 'Producto eliminado completamente del carrito'
+#         else:
+#             # Reducir la cantidad
+#             nueva_cantidad = cantidad_actual - cantidad_quitar
+#             cursor.execute("""
+#                 UPDATE app_carrito_item
+#                 SET cantidad = ?
+#                 WHERE id_item = ?
+#             """, (nueva_cantidad, id_item))
+#             mensaje = f'Se redujo la cantidad del producto a {nueva_cantidad}'
+
+#         # Recalcular el total del carrito
+#         cursor.execute("""
+#             SELECT SUM(cantidad * precio_unitario) AS total
+#             FROM app_carrito_item
+#             WHERE carrito_id = ?
+#         """, (carrito_id,))
+#         nuevo_total = cursor.fetchone()['total'] or 0
+
+#         cursor.execute("""
+#             UPDATE app_carrito
+#             SET total_carrito = ?
+#             WHERE id_carrito = ?
+#         """, (nuevo_total, carrito_id))
+
+#         conn.commit()
+#         return jsonify({'message': mensaje, 'total_carrito_actualizado': nuevo_total}), 200
+
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
+#     finally:
+#         conn.close()
 @app.route('/carrito/<int:carrito_id>/quitar_producto', methods=['POST'])
 def quitar_producto_del_carrito(carrito_id):
     try:
         data = request.json
         producto_id = data.get('producto_id')
+        local_id = data.get('local_id')  # ahora es obligatorio
         cantidad_quitar = int(data.get('cantidad', 1))
 
-        if not producto_id or cantidad_quitar <= 0:
-            return jsonify({'error': 'producto_id y cantidad deben ser válidos'}), 400
+        if not producto_id or not local_id or cantidad_quitar <= 0:
+            return jsonify({'error': 'producto_id, local_id y cantidad deben ser válidos'}), 400
 
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        # Verificar que el producto esté en el carrito
+        # Verificar que el producto esté en el carrito desde ese local
         cursor.execute("""
             SELECT id_item, cantidad FROM app_carrito_item
-            WHERE carrito_id = ? AND producto_id = ?
-        """, (carrito_id, producto_id))
+            WHERE carrito_id = ? AND producto_id = ? AND local_id = ?
+        """, (carrito_id, producto_id, local_id))
         item = cursor.fetchone()
 
         if not item:
-            return jsonify({'error': f'Producto {producto_id} no está en el carrito'}), 404
+            return jsonify({'error': f'Producto {producto_id} del local {local_id} no está en el carrito'}), 404
 
         cantidad_actual = item['cantidad']
         id_item = item['id_item']
@@ -512,7 +675,7 @@ def quitar_producto_del_carrito(carrito_id):
                 DELETE FROM app_carrito_item
                 WHERE id_item = ?
             """, (id_item,))
-            mensaje = 'Producto eliminado completamente del carrito'
+            mensaje = f'Producto eliminado completamente del carrito (local {local_id})'
         else:
             # Reducir la cantidad
             nueva_cantidad = cantidad_actual - cantidad_quitar
@@ -521,7 +684,7 @@ def quitar_producto_del_carrito(carrito_id):
                 SET cantidad = ?
                 WHERE id_item = ?
             """, (nueva_cantidad, id_item))
-            mensaje = f'Se redujo la cantidad del producto a {nueva_cantidad}'
+            mensaje = f'Se redujo la cantidad del producto a {nueva_cantidad} (local {local_id})'
 
         # Recalcular el total del carrito
         cursor.execute("""
@@ -546,6 +709,46 @@ def quitar_producto_del_carrito(carrito_id):
         conn.close()
 
 # MÉTODO PARA VER CARRITO
+# @app.route('/carrito/<int:carrito_id>', methods=['GET'])
+# def ver_carrito(carrito_id):
+#     try:
+#         conn = get_db_connection()
+#         cursor = conn.cursor()
+
+#         # Verificar si el carrito existe
+#         cursor.execute("""
+#             SELECT id_carrito, usuario_rut, tipo_cliente, estado, fecha_creacion, total_carrito
+#             FROM app_carrito
+#             WHERE id_carrito = ?
+#         """, (carrito_id,))
+#         carrito = cursor.fetchone()
+#         if not carrito:
+#             return jsonify({'error': f'Carrito {carrito_id} no existe'}), 404
+
+#         carrito_data = dict(carrito)
+
+#         # Obtener productos en el carrito
+#         cursor.execute("""
+#             SELECT 
+#                 p.nombre AS nombre_producto,
+#                 ci.producto_id,
+#                 ci.cantidad,
+#                 ci.precio_unitario,
+#                 (ci.cantidad * ci.precio_unitario) AS subtotal
+#             FROM app_carrito_item ci
+#             JOIN app_producto p ON p.id_producto = ci.producto_id
+#             WHERE ci.carrito_id = ?
+#         """, (carrito_id,))
+#         productos = [dict(row) for row in cursor.fetchall()]
+
+#         carrito_data["productos"] = productos
+
+#         return jsonify(carrito_data), 200
+
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
+#     finally:
+#         conn.close()
 @app.route('/carrito/<int:carrito_id>', methods=['GET'])
 def ver_carrito(carrito_id):
     try:
@@ -564,16 +767,19 @@ def ver_carrito(carrito_id):
 
         carrito_data = dict(carrito)
 
-        # Obtener productos en el carrito
+        # Obtener productos en el carrito con local
         cursor.execute("""
             SELECT 
                 p.nombre AS nombre_producto,
                 ci.producto_id,
                 ci.cantidad,
                 ci.precio_unitario,
-                (ci.cantidad * ci.precio_unitario) AS subtotal
+                (ci.cantidad * ci.precio_unitario) AS subtotal,
+                l.id_local,
+                l.nombre_local
             FROM app_carrito_item ci
             JOIN app_producto p ON p.id_producto = ci.producto_id
+            JOIN app_local l ON l.id_local = ci.local_id
             WHERE ci.carrito_id = ?
         """, (carrito_id,))
         productos = [dict(row) for row in cursor.fetchall()]
@@ -587,6 +793,66 @@ def ver_carrito(carrito_id):
     finally:
         conn.close()
 
+# MÉTODO PARA COMPRAR CARRITO
+@app.route('/carrito/<int:carrito_id>/comprar', methods=['POST'])
+def comprar_carrito(carrito_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # 1. Verificar que el carrito esté abierto
+        cursor.execute("""
+            SELECT estado FROM app_carrito
+            WHERE id_carrito = ?
+        """, (carrito_id,))
+        carrito = cursor.fetchone()
+        if not carrito or carrito['estado'] != 'abierto':
+            return jsonify({'error': 'Carrito no existe o ya fue cerrado'}), 400
+
+        # 2. Obtener ítems del carrito (con local)
+        cursor.execute("""
+            SELECT producto_id, local_id, cantidad
+            FROM app_carrito_item
+            WHERE carrito_id = ?
+        """, (carrito_id,))
+        items = cursor.fetchall()
+        if not items:
+            return jsonify({'error': 'El carrito está vacío'}), 400
+
+        # 3. Verificar stock suficiente para cada ítem
+        for item in items:
+            cursor.execute("""
+                SELECT cantidad FROM app_stock
+                WHERE producto_id = ? AND local_id = ?
+            """, (item['producto_id'], item['local_id']))
+            stock = cursor.fetchone()
+            if not stock or stock['cantidad'] < item['cantidad']:
+                return jsonify({
+                    'error': f'Stock insuficiente para producto {item["producto_id"]} en local {item["local_id"]}'
+                }), 400
+
+        # 4. Descontar stock
+        for item in items:
+            cursor.execute("""
+                UPDATE app_stock
+                SET cantidad = cantidad - ?
+                WHERE producto_id = ? AND local_id = ?
+            """, (item['cantidad'], item['producto_id'], item['local_id']))
+
+        # 5. Marcar el carrito como pagado
+        cursor.execute("""
+            UPDATE app_carrito
+            SET estado = 'pagado'
+            WHERE id_carrito = ?
+        """, (carrito_id,))
+
+        conn.commit()
+        return jsonify({'message': 'Compra realizada exitosamente, stock descontado y carrito pagado'}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
 
 @app.errorhandler(404)
 def showMessage(error=None):
