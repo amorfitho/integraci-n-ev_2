@@ -279,6 +279,51 @@ def delete_producto(id_producto):
 # MÉTODOS PARA EL CARRITO
 # MÉTODO PARA CREAR CARRITO
 @app.route('/carrito/crear', methods=['POST'])
+# def crear_carrito():
+#     try:
+#         data = request.json
+#         rut = data.get('usuario_rut')
+#         tipo_cliente = data.get('tipo_cliente', 'b2c')  # por defecto B2C
+
+#         if not rut or tipo_cliente not in ['b2b', 'b2c']:
+#             return jsonify({'error': 'usuario_rut y tipo_cliente válidos son requeridos'}), 400
+
+#         conn = get_db_connection()
+#         cursor = conn.cursor()
+
+#         # Verificar si ya tiene un carrito abierto
+#         cursor.execute("""
+#             SELECT id_carrito FROM app_carrito
+#             WHERE usuario_rut = ? AND estado = 'abierto'
+#             ORDER BY fecha_creacion DESC LIMIT 1
+#         """, (rut,))
+#         carrito_existente = cursor.fetchone()
+
+#         if carrito_existente:
+#             return jsonify({
+#                 'message': 'Ya tienes un carrito abierto',
+#                 'id_carrito': carrito_existente['id_carrito']
+#             }), 200
+
+#         # Crear nuevo carrito
+#         fecha_creacion = datetime.now().isoformat()
+#         cursor.execute("""
+#             INSERT INTO app_carrito (usuario_rut, fecha_creacion, estado, tipo_cliente)
+#             VALUES (?, ?, 'abierto', ?)
+#         """, (rut, fecha_creacion, tipo_cliente))
+#         conn.commit()
+
+#         nuevo_id = cursor.lastrowid
+#         return jsonify({
+#             'message': 'Carrito creado exitosamente',
+#             'id_carrito': nuevo_id
+#         }), 201
+
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
+#     finally:
+#         conn.close()
+@app.route('/carrito/crear', methods=['POST'])
 def crear_carrito():
     try:
         data = request.json
@@ -291,19 +336,20 @@ def crear_carrito():
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        # Verificar si ya tiene un carrito abierto
-        cursor.execute("""
-            SELECT id_carrito FROM app_carrito
-            WHERE usuario_rut = ? AND estado = 'abierto'
-            ORDER BY fecha_creacion DESC LIMIT 1
-        """, (rut,))
-        carrito_existente = cursor.fetchone()
+        # Solo verificar existencia de carrito abierto si es B2C
+        if tipo_cliente == 'b2c':
+            cursor.execute("""
+                SELECT id_carrito FROM app_carrito
+                WHERE usuario_rut = ? AND estado = 'abierto'
+                ORDER BY fecha_creacion DESC LIMIT 1
+            """, (rut,))
+            carrito_existente = cursor.fetchone()
 
-        if carrito_existente:
-            return jsonify({
-                'message': 'Ya tienes un carrito abierto',
-                'id_carrito': carrito_existente['id_carrito']
-            }), 200
+            if carrito_existente:
+                return jsonify({
+                    'message': 'Ya tienes un carrito abierto',
+                    'id_carrito': carrito_existente['id_carrito']
+                }), 200
 
         # Crear nuevo carrito
         fecha_creacion = datetime.now().isoformat()
