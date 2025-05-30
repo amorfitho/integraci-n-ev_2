@@ -1,5 +1,5 @@
 POST a http://127.0.0.1:5000/stock/agregar o http://127.0.0.1:5000/stock/reducir con JSON:
-Se espera algo como en el body raw (JSON):
+Se espera algo como esto en el body raw (JSON):
 {
   "producto_id": 1,
   "local_id": 1,
@@ -17,7 +17,7 @@ GET a http://localhost:5000/producto/b2b/3 -> CAMBIAR LOCALHOST POR IP REAL (Dir
 
 Crear carrito
 POST a http://IPv4:5000/carrito/crear
-Se espera algo como en el body raw (JSON):
+Se espera algo como esto en el body raw (JSON):
 {
   "usuario_rut": 12345678,
   "tipo_cliente": "b2b"
@@ -25,7 +25,7 @@ Se espera algo como en el body raw (JSON):
 
 Agregar productos al carrito
 POST a http://IPv4:5000/carrito/ID_CARRITO/agregar_producto
-Se espera algo como en el body raw (JSON):
+Se espera algo como esto en el body raw (JSON):
 {
   "producto_id": 16,
   "cantidad": 1
@@ -39,7 +39,7 @@ NUEVA FORMA JSON:
 
 Quitar productos del carrito
 POST a http://IPv4:5000/carrito/ID_CARRITO/quitar_producto
-Se espera algo como en el body raw (JSON):
+Se espera algo como esto en el body raw (JSON):
 {
   "producto_id": 16,
   "cantidad": 1
@@ -53,3 +53,10 @@ NUEVA FORMA JSON:
 
 Ver detalle de un carrito
 GET a http://IPv4:5000/carrito/ID_CARRITO
+
+Modificar dirección de carrito
+PUT a http://IPv4:5000/carrito/5/cambiar_direccion
+Se espera algo como esto en el body raw (JSON):
+{
+  "direccion_cliente": "P. Sherman, Calle Wallaby 42, Sídney"
+}
