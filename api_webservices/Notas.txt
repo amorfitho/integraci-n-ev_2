@@ -54,6 +54,9 @@ NUEVA FORMA JSON:
 Ver detalle de un carrito
 GET a http://IPv4:5000/carrito/ID_CARRITO
 
+Comprar un carrito
+POST a http://IPv4:5000/carrito/ID_CARRITO/comprar
+
 Modificar dirección de carrito
 PUT a http://IPv4:5000/carrito/5/cambiar_direccion
 Se espera algo como esto en el body raw (JSON):

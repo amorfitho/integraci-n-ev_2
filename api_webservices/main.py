@@ -745,7 +745,7 @@ def comprar_carrito(carrito_id):
 
         # 1. Verificar que el carrito esté abierto
         cursor.execute("""
-            SELECT estado FROM app_carrito
+            SELECT estado, direccion_cliente FROM app_carrito
             WHERE id_carrito = ?
         """, (carrito_id,))
         carrito = cursor.fetchone()
