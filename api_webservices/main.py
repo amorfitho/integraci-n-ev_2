@@ -834,6 +834,88 @@ def actualizar_direccion_carrito(id_carrito):
     finally:
         conn.close()
 
+#METODO REGISTRO USUARIOS
+@app.route('/registro', methods=['POST'])
+def registrar_usuario():
+    try:
+        data = request.json
+        rut = data.get('rut')
+        nombre = data.get('nombre')
+        apellido = data.get('apellido')
+        contrasena = data.get('contrasena')
+        tipo_usuario = data.get('tipo_usuario')  # valor numérico como 1, 2, etc.
+        direccion = data.get('direccion', '-')  # por defecto '-'
+
+        if not all([rut, nombre, apellido, contrasena, tipo_usuario]):
+            return jsonify({'error': 'Todos los campos son obligatorios'}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Verificar si ya existe el usuario
+        cursor.execute("SELECT * FROM app_usuario WHERE rut = ?", (rut,))
+        if cursor.fetchone():
+            return jsonify({'error': 'Este RUT ya está registrado'}), 400
+
+        # Insertar nuevo usuario
+        cursor.execute("""
+            INSERT INTO app_usuario (rut, nombre_usuario, apellido_usuario, contrasena, tipo_usuario_id, direccion)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (rut, nombre, apellido, contrasena, tipo_usuario, direccion))
+        conn.commit()
+
+        return jsonify({'message': 'Usuario registrado exitosamente'}), 201
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+#METODO DE LOGIN
+@app.route('/login', methods=['POST'])
+def login_usuario():
+    try:
+        data = request.json
+        rut = data.get('rut')
+        contrasena = data.get('contrasena')
+
+        if not rut or not contrasena:
+            return jsonify({'error': 'Se requieren rut y contraseña'}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        # Buscar usuario por rut
+        cursor.execute("""
+            SELECT rut, nombre_usuario, apellido_usuario, contrasena, tipo_usuario_id
+            FROM app_usuario
+            WHERE rut = ?
+        """, (rut,))
+        user = cursor.fetchone()
+
+        if not user:
+            return jsonify({'error': 'Usuario no encontrado'}), 404
+
+        # Comparar contraseña en texto plano
+        if user['contrasena'] != contrasena:
+            return jsonify({'error': 'Contraseña incorrecta'}), 401
+
+        # Retornar datos del usuario (sin contraseña)
+        return jsonify({
+            'message': 'Login exitoso',
+            'rut': user['rut'],
+            'nombre': user['nombre_usuario'],
+            'apellido': user['apellido_usuario'],
+            'tipo_usuario': user['tipo_usuario_id']
+        }), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+
+#MENSAGE ERROE SI NO CARGA
 @app.errorhandler(404)
 def showMessage(error=None):
     message = {
