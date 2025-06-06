@@ -63,3 +63,20 @@ Se espera algo como esto en el body raw (JSON):
 {
   "direccion_cliente": "P. Sherman, Calle Wallaby 42, Sídney"
 }
+
+Registrar usuario
+POST a http://IPv4:5000/registro
+{
+  "rut": "88888888",
+  "nombre": "Lucas",
+  "apellido": "Rivas",
+  "contrasena": "clave123",
+  "tipo_usuario": 2
+}
+
+Logear usuario
+POST a http://IPv4:5000/login
+{
+  "rut": "12345678",
+  "contrasena": "clienteB2B123"
+}
