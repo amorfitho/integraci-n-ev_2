@@ -39,8 +39,7 @@
       <div>Cantidad: {{ stock.cantidad }}</div>
 
       <div class="product-actions">
-        <a href="{% url 'modificar' stock.id %}" class="button edit">Modificar</a>
-        <a href="{% url 'eliminar_stock' stock.id %}" class="button eliminar_producto">Eliminar Stock</a>
+        <a href="{% url 'shoppingcart' %}" class="button add-to-cart">Agregar al carrito</a>
       </div>
     </div>
   </div>

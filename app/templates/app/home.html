@@ -16,7 +16,19 @@
           <img src="{% static 'app/image/car.png' %}" alt="logo" height="60px">Autoparts
       </div>
       <div class="acnt">
-         <div><a href=""><img src="{% static 'app/image/account.png' %}" alt="" width="30px"></a></div>
+         <div>
+      <a href="#">
+         <img src="{% static 'app/image/account.png' %}" alt="" width="30px">
+         <span style="color:white;">
+           {% if request.session.nombre %}
+             {{ request.session.nombre }}
+           {% else %}
+             Invitado
+           {% endif %}
+           <a href="{% url 'logout' %}" style="color:white; font-size: 14px; margin-left: 5px;">Cerrar sesión</a>
+         </span>
+      </a>
+   </div>
       </div>
       <div class="lateral-bar">
          <div><a href="{% url 'home' %}"><img src="{% static 'app/image/home.png' %}" alt="" width="30px"></a></div>

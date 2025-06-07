@@ -118,3 +118,8 @@ def login_usuario(request):
     else:
         form = LoginForm()
     return render(request, 'sesiones/login.html', {'form': form})
+
+#CIERRE SESION USUARIO
+def logout_usuario(request):
+    request.session.flush()  # elimina toda la sesión
+    return redirect('home')  # cambia a la URL que tú uses
