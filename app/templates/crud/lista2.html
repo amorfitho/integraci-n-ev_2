@@ -9,46 +9,53 @@
 
 {% block contenido %}
 <div class="navbar-main" style="top: 0;">
-      <div class="logo">
-          <img src="{% static 'app/image/car.png' %}" alt="logo" height="60px">Autoparts
-      </div>
-      <div class="acnt">
-         <div><a href=""><img src="{% static 'app/image/account.png' %}" alt="" width="30px"></a></div>
-      </div>
-      <div class="lateral-bar">
-         <div><a href="{% url 'home' %}"><img src="{% static 'app/image/home.png' %}" alt="" width="30px"></a></div>
-         <div><a href="{% url 'shoppingcart' %}"><img src="{% static 'app/image/shoppingcart.png' %}" alt="" width="30px"></a></div>
-         <div><a href="{% url 'agregar' %}"><img src="{% static 'app/image/addproduct.png' %}" alt="" width="30px"></a></div>
-         <div><a href="{% url 'lista2' %}"><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
-     </div>
+  <div class="logo">
+    <img src="{% static 'app/image/car.png' %}" alt="logo" height="60px">Autoparts
   </div>
-<div class="container my-4 pt-5"> 
-    <h2 class="text-center my-4">Productos</h2>
-    <div class="product-grid">
-    {% for stock in stocks %}
-  <div class="product-card">
-    {% if stock.producto.imagen %}
-        <img src="{{ stock.producto.imagen.url }}" alt="{{ stock.producto.nombre }}" class="product-image">
-    {% else %}
-        <img src="{% static 'app/image/default-product.jpg' %}" alt="Imagen por defecto" class="product-image">
-    {% endif %}
-
-    <div class="product-details">
-      <div class="product-name">{{ stock.producto.nombre }}</div>
-      <div class="product-price">${{ stock.producto.precio }}</div>
-      <div>Cantidad: {{ stock.cantidad }}</div>
-
-      <div class="product-actions">
-        <a href="{% url 'shoppingcart' %}" class="button add-to-cart">Agregar al carrito</a>
-      </div>
-    </div>
+  <div class="acnt">
+    <div><a href=""><img src="{% static 'app/image/account.png' %}" alt="" width="30px"></a></div>
   </div>
-{% empty %}
-  <p>No hay stocks disponibles.</p>
-    {% endfor %}
-    </div>
+  <div class="lateral-bar">
+    <div><a href="{% url 'home' %}"><img src="{% static 'app/image/home.png' %}" alt="" width="30px"></a></div>
+    <div><a href="{% url 'shoppingcart' %}"><img src="{% static 'app/image/shoppingcart.png' %}" alt=""
+          width="30px"></a></div>
+    <div><a href="{% url 'agregar' %}"><img src="{% static 'app/image/addproduct.png' %}" alt="" width="30px"></a></div>
+    <div><a href="{% url 'lista2' %}"><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
+  </div>
 </div>
+<div class="container my-4 pt-5">
+  <h2 class="text-center my-4">Productos</h2>
+  <div class="product-grid">
+    {% for stock in stocks %}
+    <div class="product-card">
+      {% if stock.producto.imagen %}
+      <img src="{{ stock.producto.imagen.url }}" alt="{{ stock.producto.nombre }}" class="product-image">
+      {% else %}
+      <img src="{% static 'app/image/default-product.jpg' %}" alt="Imagen por defecto" class="product-image">
+      {% endif %}
+
+      <div class="product-details">
+        <div class="product-name">{{ stock.producto.nombre }}</div>
+        <div class="product-price">${{ stock.producto.precio }}</div>
+        <div>Cantidad: {{ stock.cantidad }}</div>
+
+        <div class="product-actions">
+          <button class="button add-to-cart" data-product-id="{{ stock.producto.id }}" data-local-id="1">Agregar al
+            carrito</button>
+        </div>
+      </div>
+      {% empty %}
+      <p>No hay stocks disponibles.</p>
+      {% endfor %}
+    </div>
+  </div>
 
 
+
+
+  {% endblock %}
+
+{% block js %}
+  
 
 {% endblock %}

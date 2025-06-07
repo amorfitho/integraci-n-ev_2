@@ -1,62 +1,49 @@
 {% extends 'app/base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block contenido %}
-
-
 <h1>Listado de Sucursales y Stock de Productos</h1>
 
 {% for local in locales %}
     <h2>{{ local.nombre_local }}</h2>
     <p><strong>Dirección:</strong> {{ local.direccion }}</p>
-    
-    {% if local.stocks.all %}
-        <table border="1" cellpadding="5">
-            <thead>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Imagen</th>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Cantidad en Stock</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stock in local.stocks.all %}
                 <tr>
-                    <th>Producto</th>
-                    <th>Familia</th>
-                    <th>Descripción</th>
-                    <th>Precio</th>
-                    <th>Cantidad en stock</th>
-                    <th>Acciones</th>
-                    <th>Opciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for stock in local.stocks.all %}
-                <tr>
+                    <td>
+                        {% if stock.producto.imagen %}
+                            <img src="{{ stock.producto.imagen.url }}" alt="{{ stock.producto.nombre }}" class="product-image">
+                        {% else %}
+                            <img src="{% static 'app/image/default-product.jpg' %}" alt="Imagen por defecto" class="product-image">
+                        {% endif %}
+                    </td>
                     <td>{{ stock.producto.nombre }}</td>
-                    <td>{{ stock.producto.familia.nombre_familia }}</td>
-                    <td>{{ stock.producto.descripcion }}</td>
-                    <td>${{ stock.producto.precio }}</td>
+                    <td>${{ stock.producto.precio_minorista }}</td>
+                    <td>${{ stock.producto.precio_mayorista }}</td>
                     <td>{{ stock.cantidad }}</td>
                     <td>
-                        <a href="{% url 'modificar' stock.producto.id_producto %}">Modificar</a>
+                        <a href="{% url 'modificar' stock.id %}" class="button edit">Modificar</a>
                     </td>
-                    <td>
-                        <a href="{% url 'eliminar_producto' stock.producto.id_producto %}">Eliminar</a>
-                    </td>
-                    <!--
-                    <td>
-                        <form action="{% url 'agregar_stock' stock.id %}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit">➕</button>
-                        </form>
-                        <form action="{% url 'rebajar_stock' stock.id %}" method="post" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit">➖</button>
-                        </form>
-                    </td>
-                    -->
                 </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No hay productos en stock en esta sucursal.</p>
-    {% endif %}
-    <hr>
+            {% empty %}
+                <tr>
+                    <td colspan="2">Este local no tiene productos en stock.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endfor %}
 
 {% endblock %}

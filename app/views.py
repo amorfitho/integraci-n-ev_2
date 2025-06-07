@@ -15,9 +15,9 @@ def lista2(request):
     return render(request, 'crud/lista2.html', {'stocks': stocks})
 
 def sucursales_y_stock(request):
+    # Usamos prefetch_related con el related_name correcto: "stocks"
     locales = Local.objects.prefetch_related('stocks__producto').all()
-    stocks = Stock.objects.select_related('producto', 'local').all()
-    return render(request, 'crud/lista.html', {'stocks': stocks})
+    return render(request, 'crud/lista.html', {'locales': locales})
 
 def agregar(request):
     if request.method == 'POST':
@@ -122,4 +122,68 @@ def login_usuario(request):
 #CIERRE SESION USUARIO
 def logout_usuario(request):
     request.session.flush()  # elimina toda la sesión
-    return redirect('home')  # cambia a la URL que tú uses
+    return redirect('home')  # cambia a la URL que tú uses´
+
+# Agregar producto al carrito
+def agregar_al_carrito(request, producto_id):
+    rut = request.session.get('rut')
+    tipo_cliente = 'b2c'  # puedes cambiar según el tipo si lo guardas también
+    local_id = 1  # aquí puedes mejorar con lógica futura
+
+    if not rut:
+        messages.error(request, "Debes iniciar sesión para agregar productos.")
+        return redirect('login')
+
+    # Verificar si ya existe carrito o crearlo
+    try:
+        # Crear o reutilizar carrito
+        resp = requests.post("http://127.0.0.1:5000/carrito/crear", json={
+            "usuario_rut": rut,
+            "tipo_cliente": tipo_cliente
+        })
+        resp_data = resp.json()
+        carrito_id = resp_data.get("id_carrito")
+
+        # Agregar el producto al carrito
+        resp2 = requests.post(f"http://127.0.0.1:5000/carrito/{carrito_id}/agregar_producto", json={
+            "producto_id": producto_id,
+            "cantidad": 1,
+            "local_id": local_id
+        })
+
+        if resp2.status_code == 200:
+            messages.success(request, "Producto agregado al carrito.")
+        else:
+            messages.error(request, resp2.json().get("error", "Error al agregar producto."))
+
+    except requests.exceptions.RequestException as e:
+        messages.error(request, f"Error de conexión con la API: {str(e)}")
+
+    return redirect('shoppingcart')
+
+
+
+
+def ver_carrito(request):
+    rut = request.session.get('rut')
+    if not rut:
+        return redirect('login')
+
+    # Obtener el último carrito abierto
+    try:
+        resp = requests.post("http://127.0.0.1:5000/carrito/crear", json={
+            "usuario_rut": rut,
+            "tipo_cliente": "b2c"
+        })
+        carrito_id = resp.json().get("id_carrito")
+
+        # Obtener detalle del carrito
+        resp = requests.get(f"http://127.0.0.1:5000/carrito/{carrito_id}")
+        if resp.status_code == 200:
+            carrito = resp.json()
+        else:
+            carrito = None
+    except:
+        carrito = None
+
+    return render(request, 'app/shoppingcart.html', {'carrito': carrito})
