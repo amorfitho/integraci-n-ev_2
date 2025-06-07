@@ -1,7 +1,11 @@
+import requests
 from django.shortcuts import render, redirect, get_object_or_404
 
+from .forms import RegistroUsuarioForm
+from django.contrib import messages
+
 from .models import Local, Stock,Producto
-from .forms import ProductoForm
+from .forms import ProductoForm, LoginForm
 
 def home(request):
     return render(request, 'app/home.html')
@@ -67,3 +71,50 @@ def eliminar_stock(request, stock_id):
     stock.delete()
     return redirect('lista')
 
+#REISTRO USUARIO
+API_URL = "http://localhost:5000/registro"  # o IP pública si está desplegado
+
+def registro_usuario(request):
+    if request.method == 'POST':
+        form = RegistroUsuarioForm(request.POST)
+        if form.is_valid():
+            datos = form.cleaned_data
+            try:
+                response = requests.post(API_URL, json=datos)
+                if response.status_code == 201:
+                    messages.success(request, 'Usuario registrado exitosamente.')
+                    return redirect('/')  
+                else:
+                    error = response.json().get('error', 'Error desconocido')
+                    messages.error(request, f'Error al registrar: {error}')
+            except requests.exceptions.RequestException as e:
+                messages.error(request, f'Error de conexión: {str(e)}')
+    else:
+        form = RegistroUsuarioForm()
+    return render(request, 'sesiones/registro.html', {'form': form})
+
+
+#LOGIN DEL USUARIO
+def login_usuario(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            datos = form.cleaned_data
+            try:
+                response = requests.post("http://127.0.0.1:5000/login", json=datos)
+                if response.status_code == 200:
+                    usuario = response.json()
+                    request.session['rut'] = usuario['rut']
+                    request.session['nombre'] = usuario['nombre']
+                    request.session['apellido'] = usuario['apellido']
+                    request.session['tipo_usuario'] = usuario['tipo_usuario']
+                    messages.success(request, 'Inicio de sesión exitoso.')
+                    return redirect('/')  # Cambia por la ruta que desees
+                else:
+                    error = response.json().get('error', 'Credenciales incorrectas')
+                    messages.error(request, f'Error: {error}')
+            except requests.exceptions.RequestException as e:
+                messages.error(request, f'Error de conexión: {str(e)}')
+    else:
+        form = LoginForm()
+    return render(request, 'sesiones/login.html', {'form': form})
