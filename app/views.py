@@ -200,3 +200,9 @@ from django.http import JsonResponse
 
 def ver_sesion(request):
     return JsonResponse(dict(request.session))
+
+def CatalogoB2B(request):
+    return render(request, 'app/catalogob2b.html')
+
+def CatalogoB2C(request):
+    return render(request, 'app/catalogob2c.html')

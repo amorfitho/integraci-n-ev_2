@@ -1,0 +1,83 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: rgb(255, 244, 230);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.catalogo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center; /* Centraliza horizontalmente */
+  gap: 20px;
+  padding-top: 100px; /* Para que no se esconda detrás del navbar */
+  margin-left: 320px; /* Deja espacio para la barra lateral */
+  padding-bottom: 40px;
+}
+
+
+.tarjeta {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 220px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: center;
+  padding: 15px;
+  transition: transform 0.2s;
+
+  /* AÑADIDOS PARA IGUALAR ALTURA Y POSICIONAR BOTÓN */
+  display: flex;
+  flex-direction: column;
+  min-height: 380px; /* Ajusta según sea necesario */
+}
+
+.tarjeta:hover {
+  transform: translateY(-5px);
+}
+
+.tarjeta img {
+  width: 100%;
+  border-radius: 5px;
+}
+
+.tarjeta h2 {
+  font-size: 1.1em;
+  margin: 10px 0;
+  color: #444;
+  min-height: 45px;
+}
+
+.tarjeta p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.product-actions {
+  margin-top: auto; /* Empuja el botón al fondo */
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+    background-color: #fca966; /* color de fondo visible */
+    color: white;              /* texto visible */
+    border: none;
+    padding: 8px 16px;         /* tamaño cómodo */
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;     /* que se muestren */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #f3872e;
+    color: white;
+}

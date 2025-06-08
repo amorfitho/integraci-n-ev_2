@@ -1,0 +1,86 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block js %}
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'app/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'app/css/cat.css' %}">
+
+{% endblock %}
+
+{% block contenido %}
+
+<div>
+   <div class="navbar-main">
+      <div class="logo">
+          <img src="{% static 'app/image/car.png' %}" alt="logo" height="60px">Autoparts
+      </div>
+      <div class="acnt">
+         <div>
+      <a href="#">
+         <img src="{% static 'app/image/account.png' %}" alt="" width="30px">
+         <span style="color:white;">
+           {% if request.session.nombre %}
+             {{ request.session.nombre }}
+           {% else %}
+             Invitado
+           {% endif %}
+           <a href="{% url 'logout' %}" style="color:white; font-size: 14px; margin-left: 5px;">Cerrar sesión</a>
+         </span>
+      </a>
+   </div>
+      </div>
+      <div class="lateral-bar">
+         <div><a href="{% url 'home' %}"><img src="{% static 'app/image/home.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'shoppingcart' %}"><img src="{% static 'app/image/shoppingcart.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'agregar' %}"><img src="{% static 'app/image/addproduct.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'lista2' %}"><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'catalogob2b' %}"><img src="{% static 'app/image/catalogue.png' %}" alt="" width="30px"></a></div>
+     </div>
+  </div>
+</div>
+
+<h1>Catálogo de Productos</h1>
+  <div class="catalogo">
+
+    <!-- Tarjeta de producto -->
+    <div class="tarjeta">
+      <img src="{% static 'app/image/frenos.png' %}" alt="Producto 1" />
+      <h2>Pastillas de Freno Delanteras</h2>
+      <p><strong>Precio Mayorista:</strong> $3.000</p>
+      <p><strong>Cantidad:</strong> 10</p>
+      <div class="product-actions">
+          <button class="button add-to-cart" data-product-id="{{ stock.producto.id }}" data-local-id="1">Agregar al
+            carrito</button>
+        </div>
+    </div>
+
+    <div class="tarjeta">
+      <img src="{% static 'app/image/condensador.png' %}" alt="Producto 2" />
+      <h2>Condensador</h2>
+      <p><strong>Precio:</strong> $5.000</p>
+      <p><strong>Cantidad:</strong> 15</p>
+      <div class="product-actions">
+          <button class="button add-to-cart" data-product-id="{{ stock.producto.id }}" data-local-id="1">Agregar al
+            carrito</button>
+        </div>
+    </div>
+
+    <div class="tarjeta">
+      <img src="{% static 'app/image/anticongelante.png' %}" alt="Producto 3" />
+      <h2>Anticongelante</h2>
+      <p><strong>Precio:</strong> $2.000</p>
+      <p><strong>Cantidad:</strong> 20</p>
+      <div class="product-actions">
+          <button class="button add-to-cart" data-product-id="{{ stock.producto.id }}" data-local-id="1">Agregar al
+            carrito</button>
+        </div>
+    </div>
+
+    <!-- Agrega más tarjetas según lo necesites -->
+
+  </div>
+
+{% endblock %}

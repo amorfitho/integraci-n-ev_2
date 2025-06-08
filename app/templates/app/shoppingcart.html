@@ -25,13 +25,25 @@
          <div><a href="{% url 'shoppingcart' %}"><img src="{% static 'app/image/shoppingcart.png' %}" alt="" width="30px"></a></div>
          <div><a href="{% url 'agregar' %}"><img src="{% static 'app/image/addproduct.png' %}" alt="" width="30px"></a></div>
          <div><a href="{% url 'lista2' %}"><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'catalogob2b' %}"><img src="{% static 'app/image/catalogue.png' %}" alt="" width="30px"></a></div>
      </div>
   </div>
 </div>
 <main class="page">
          <section class="shopping-cart">
+          <div class="resumen-compra" style="margin-left: 1200px; margin-top: 120px; position: absolute;">
+            <div class="col-sm-6">
+              <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                  <h4 class="card-title">Resumen de Compra</h4>
+                  <p class="card-text">Precio: $</p>
+                  <a href="#" class="btn btn-primary">Realizar pago</a>
+                </div>
+              </div>
+            </div>
+          </div>
     <div class="container">
-      <h2 style="color:white; margin: 30px;">Carrito de Compras</h2>
+      <h2 style="color:rgb(0, 0, 0); margin: 30px;">Carrito de Compras</h2>
 
       {% if carrito %}
         <div style="margin: 20px;">
@@ -48,7 +60,7 @@
           <p><strong>Total:</strong> ${{ carrito.total_carrito }}</p>
         </div>
       {% else %}
-        <p style="color:white;">Tu carrito está vacío.</p>
+        <p style="color:rgb(0, 0, 0);">Tu carrito está vacío.</p>
       {% endif %}
     </div>
   </section>
