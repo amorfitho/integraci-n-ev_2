@@ -26,10 +26,6 @@ Se espera algo como esto en el body raw (JSON):
 Agregar productos al carrito
 POST a http://IPv4:5000/carrito/ID_CARRITO/agregar_producto
 Se espera algo como esto en el body raw (JSON):
-{
-  "producto_id": 16,
-  "cantidad": 1
-}
 NUEVA FORMA JSON:
 {
   "producto_id": 16,
@@ -40,10 +36,6 @@ NUEVA FORMA JSON:
 Quitar productos del carrito
 POST a http://IPv4:5000/carrito/ID_CARRITO/quitar_producto
 Se espera algo como esto en el body raw (JSON):
-{
-  "producto_id": 16,
-  "cantidad": 1
-}
 NUEVA FORMA JSON:
 {
   "producto_id": 16,

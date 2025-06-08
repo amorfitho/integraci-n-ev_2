@@ -527,10 +527,15 @@ def crear_carrito():
 #         conn.close()
 @app.route('/carrito/<int:carrito_id>/agregar_producto', methods=['POST'])
 def agregar_producto_a_carrito(carrito_id):
+    conn = None  # evita UnboundLocalError
     try:
-        data = request.json
+        data = request.get_json()
+        print("🔍 JSON recibido desde el navegador:", data)
+        if not data:
+            return jsonify({'error': 'No se recibió un JSON válido'}), 400
+
         producto_id = data.get('producto_id')
-        local_id = data.get('local_id')  # nuevo: debe indicarse el local desde donde se toma el stock
+        local_id = data.get('local_id')
         cantidad_nueva = int(data.get('cantidad', 1))
 
         if not producto_id or not local_id or cantidad_nueva <= 0:
@@ -622,7 +627,8 @@ def agregar_producto_a_carrito(carrito_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
-        conn.close()
+        if conn is not None:
+            conn.close()
 
 # MÉTODO PARA QUITAR PRODUCTOS DEL CARRITO
 @app.route('/carrito/<int:carrito_id>/quitar_producto', methods=['POST'])

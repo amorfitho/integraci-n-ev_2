@@ -99,6 +99,36 @@ def registro_usuario(request):
 
 
 #LOGIN DEL USUARIO
+# def login_usuario(request):
+#     if request.method == 'POST':
+#         form = LoginForm(request.POST)
+#         if form.is_valid():
+#             datos = form.cleaned_data
+#             try:
+#                 response = requests.post("http://127.0.0.1:5000/login", json=datos)
+#                 print("RESPUESTA DE API:", response.status_code, response.text)  # <--- DEBUG
+
+#                 if response.status_code == 200:
+#                     usuario = response.json()
+#                     print("USUARIO RECIBIDO:", usuario)  # <--- DEBUG
+
+#                     request.session['rut'] = usuario['rut']
+#                     request.session['nombre'] = usuario['nombre']
+#                     request.session['apellido'] = usuario['apellido']
+#                     request.session['tipo_usuario'] = usuario['tipo_usuario']
+
+#                     print("SESION DESPUES DE LOGIN:", dict(request.session))  # <--- DEBUG
+                    
+#                     messages.success(request, 'Inicio de sesión exitoso.')
+#                     return redirect('/')  # Cambia por la ruta que desees
+#                 else:
+#                     error = response.json().get('error', 'Credenciales incorrectas')
+#                     messages.error(request, f'Error: {error}')
+#             except requests.exceptions.RequestException as e:
+#                 messages.error(request, f'Error de conexión: {str(e)}')
+#     else:
+#         form = LoginForm()
+#     return render(request, 'sesiones/login.html', {'form': form})
 def login_usuario(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -106,21 +136,43 @@ def login_usuario(request):
             datos = form.cleaned_data
             try:
                 response = requests.post("http://127.0.0.1:5000/login", json=datos)
-                print("RESPUESTA DE API:", response.status_code, response.text)  # <--- DEBUG
+                print("RESPUESTA DE API:", response.status_code, response.text)  # DEBUG
 
                 if response.status_code == 200:
                     usuario = response.json()
-                    print("USUARIO RECIBIDO:", usuario)  # <--- DEBUG
+                    print("USUARIO RECIBIDO:", usuario)  # DEBUG
 
+                    # Guardar datos del usuario en sesión
                     request.session['rut'] = usuario['rut']
                     request.session['nombre'] = usuario['nombre']
                     request.session['apellido'] = usuario['apellido']
                     request.session['tipo_usuario'] = usuario['tipo_usuario']
 
-                    print("SESION DESPUES DE LOGIN:", dict(request.session))  # <--- DEBUG
-                    
+                    print("SESION DESPUES DE LOGIN:", dict(request.session))  # DEBUG
+
+                    # Crear o reutilizar carrito después del login
+                    try:
+                        tipo_cliente = 'b2b' if usuario["tipo_usuario"] == 1 else 'b2c'
+                        payload = {
+                            "usuario_rut": usuario["rut"],
+                            "tipo_cliente": tipo_cliente,
+                            "direccion_cliente": "-"  # Puedes mejorar esto con una dirección real si la tienes
+                        }
+
+                        carrito_resp = requests.post("http://127.0.0.1:5000/carrito/crear", json=payload)
+                        if carrito_resp.status_code in [200, 201]:
+                            carrito_info = carrito_resp.json()
+                            request.session["id_carrito"] = carrito_info.get("id_carrito")  # guardar en sesión si quieres
+                            print("CARRITO ASIGNADO:", carrito_info)
+                        else:
+                            print("Error al crear o recuperar carrito:", carrito_resp.text)
+
+                    except requests.exceptions.RequestException as e:
+                        print("Error conectando con la API de carritos:", str(e))
+
                     messages.success(request, 'Inicio de sesión exitoso.')
-                    return redirect('/')  # Cambia por la ruta que desees
+                    return redirect('/')  # Puedes redirigir a catalogoB2B o B2C según tipo
+
                 else:
                     error = response.json().get('error', 'Credenciales incorrectas')
                     messages.error(request, f'Error: {error}')
@@ -129,6 +181,7 @@ def login_usuario(request):
     else:
         form = LoginForm()
     return render(request, 'sesiones/login.html', {'form': form})
+
 
 #CIERRE SESION USUARIO
 def logout_usuario(request):
@@ -204,15 +257,13 @@ def ver_sesion(request):
     return JsonResponse(dict(request.session))
 
 def CatalogoB2B(request):
-    stocks = Stock.objects.select_related('producto', 'local').all()
-    return render(request, 'app/catalogob2b.html', {'stocks': stocks})
-
-# def CatalogoB2C(request):
-#     stocks = Stock.objects.select_related('producto', 'local').all()
-#     return render(request, 'app/catalogob2c.html', {'stocks': stocks})
-def CatalogoB2C(request):
-    local = Local.objects.first()
     productos = Producto.objects.prefetch_related(
-        Prefetch('stocks', queryset=Stock.objects.filter(local=local), to_attr='stock_local')
+        Prefetch('stocks', queryset=Stock.objects.select_related('local'), to_attr='stock_local')
     )
+    return render(request, 'app/catalogob2b.html', {'productos': productos})
+
+def CatalogoB2C(request):
+    productos = Producto.objects.prefetch_related(
+        Prefetch('stocks', queryset=Stock.objects.select_related('local'), to_attr='stock_local')
+    ).all()
     return render(request, 'app/catalogob2c.html', {'productos': productos})
