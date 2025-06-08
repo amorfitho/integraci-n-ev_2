@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
 <link rel="stylesheet" href="{% static 'app/css/style.css' %}">
 <link rel="stylesheet" href="{% static 'app/css/cat.css' %}">
-
 {% endblock %}
 
 {% block contenido %}
@@ -42,33 +42,49 @@
   </div>
 </div>
 
-<h1>Catálogo de Productos</h1>
-  <div class="catalogo">
-    <div class="product-grid">
-      {% for stock in stocks %}
-        <div class="product-card">
-          {% if stock.producto.imagen %}
-            <img src="{{ stock.producto.imagen.url }}" alt="{{ stock.producto.nombre }}" class="product-image">
-          {% else %}
-            <img src="{% static 'app/image/default-product.jpg' %}" alt="Imagen por defecto" class="product-image">
-          {% endif %}
+<div class="container-fluid contProductos mt-4 main-area">
 
-          <div class="product-details">
-            <div class="product-name">{{ stock.producto.nombre }}</div>
-            <div class="product-price">${{ stock.producto.precio_minorista }}</div>
-            <div>Cantidad: {{ stock.cantidad }}</div>
-          </div>
+    <h1 class="text-center mb-4">Catálogo de Productos</h1>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 text-center" id="catalogo">
+        {% for producto in productos %}
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    {% if producto.imagen %}
+                        <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.nombre }}">
+                    {% else %}
+                        <img src="{% static 'app/image/default-product.jpg' %}" class="card-img-top" alt="Imagen por defecto">
+                    {% endif %}
 
-          <div class="product-actions">
-            <button class="button add-to-cart" data-product-id="{{ stock.producto.id }}" data-local-id="1">
-              Agregar al carrito
-            </button>
-          </div>
-        </div>
-      {% empty %}
-        <p>No hay stocks disponibles.</p>
-      {% endfor %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ producto.nombre }}</h5>
+                        <p class="card-text">Precio: ${{ producto.precio }}</p>
+                        {% if producto.stock_local and producto.stock_local.0 %}
+                            <p class="card-text">Stock: {{ producto.stock_local.0.cantidad }}</p>
+                        {% else %}
+                            <p class="card-text text-danger">Stock: 0</p>
+                        {% endif %}
+                    </div>
+                    <div class="card-footer">
+                        {% if producto.stock_local and producto.stock_local.0 %}
+                            <button class="btn btn-primary w-100 add-to-cart"
+                                    data-product-id="{{ producto.id }}"
+                                    data-local-id="{{ producto.stock_local.0.local.id }}">
+                                Agregar al carrito
+                            </button>
+                        {% else %}
+                            <button class="btn btn-secondary w-100" disabled>
+                                Sin stock
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <p class="text-center">No hay productos disponibles.</p>
+            </div>
+        {% endfor %}
     </div>
-  </div>
+</div>
 
 {% endblock %}

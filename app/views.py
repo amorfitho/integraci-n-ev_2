@@ -7,6 +7,9 @@ from django.contrib import messages
 from .models import Local, Stock,Producto
 from .forms import ProductoForm, LoginForm
 
+from django.http import JsonResponse
+from django.db.models import Prefetch
+
 def home(request):
     print("SESIÓN ACTUAL:", dict(request.session))
     return render(request, 'app/home.html')
@@ -196,7 +199,6 @@ def ver_carrito(request):
 
     return render(request, 'app/shoppingcart.html', {'carrito': carrito})
 
-from django.http import JsonResponse
 
 def ver_sesion(request):
     return JsonResponse(dict(request.session))
@@ -205,6 +207,12 @@ def CatalogoB2B(request):
     stocks = Stock.objects.select_related('producto', 'local').all()
     return render(request, 'app/catalogob2b.html', {'stocks': stocks})
 
+# def CatalogoB2C(request):
+#     stocks = Stock.objects.select_related('producto', 'local').all()
+#     return render(request, 'app/catalogob2c.html', {'stocks': stocks})
 def CatalogoB2C(request):
-    stocks = Stock.objects.select_related('producto', 'local').all()
-    return render(request, 'app/catalogob2c.html', {'stocks': stocks})
+    local = Local.objects.first()
+    productos = Producto.objects.prefetch_related(
+        Prefetch('stocks', queryset=Stock.objects.filter(local=local), to_attr='stock_local')
+    )
+    return render(request, 'app/catalogob2c.html', {'productos': productos})

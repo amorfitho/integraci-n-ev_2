@@ -81,3 +81,33 @@ h1 {
     background-color: #f3872e;
     color: white;
 }
+
+.contProductos {
+    padding: 6rem 1rem 6rem 1rem; /* mismo padding a izquierda y derecha */
+}
+
+/* Asegura que el contenido pueda hacer scroll si es necesario */
+html, body {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.card-img-top {
+    max-height: 180px;
+    object-fit: contain;
+}
+
+.card {
+  max-width: 100%;
+}
+
+.col {
+  flex: 0 0 auto;
+}
+
+.main-area {
+  max-width: 1200px;     /* o el ancho deseado del contenido */
+  margin: 0 auto;        /* centra horizontalmente */
+  padding-top: 6rem;     /* espacio para navbar */
+}
