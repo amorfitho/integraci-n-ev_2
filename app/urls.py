@@ -1,5 +1,5 @@
 from django.urls import path
-from.views import home, agregar,lista2 ,sucursales_y_stock, rebajar_stock, modificar, eliminar_producto, shoppingcart, modificar, eliminar_stock, registro_usuario, login_usuario, logout_usuario, agregar_al_carrito, ver_carrito
+from.views import home, agregar,lista2 ,sucursales_y_stock, rebajar_stock, modificar, eliminar_producto, shoppingcart, modificar, eliminar_stock, registro_usuario, login_usuario, logout_usuario, agregar_al_carrito, ver_carrito, ver_sesion
 
 # importar nombre puesto en def de la pagian desde "views"
 #   path('nombre de la pagina/', nombre_de_la_pagina, name= nombre de la pagina(esto es para el direcionamiento con botones))
@@ -19,5 +19,6 @@ urlpatterns = [
     path('login/', login_usuario, name='login'),
     path('logout/', logout_usuario, name='logout'),
     path('shoppingcart/agregar/<int:producto_id>/', agregar_al_carrito, name='agregar_al_carrito'),
-    path('shoppingcart/', ver_carrito, name='shoppingcart')
+    path('shoppingcart/', ver_carrito, name='shoppingcart'),
+    path('debug/sesion/', ver_sesion),
 ]

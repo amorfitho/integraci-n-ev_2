@@ -8,6 +8,7 @@ from .models import Local, Stock,Producto
 from .forms import ProductoForm, LoginForm
 
 def home(request):
+    print("SESIÓN ACTUAL:", dict(request.session))
     return render(request, 'app/home.html')
 
 def lista2(request):
@@ -102,12 +103,19 @@ def login_usuario(request):
             datos = form.cleaned_data
             try:
                 response = requests.post("http://127.0.0.1:5000/login", json=datos)
+                print("RESPUESTA DE API:", response.status_code, response.text)  # <--- DEBUG
+
                 if response.status_code == 200:
                     usuario = response.json()
+                    print("USUARIO RECIBIDO:", usuario)  # <--- DEBUG
+
                     request.session['rut'] = usuario['rut']
                     request.session['nombre'] = usuario['nombre']
                     request.session['apellido'] = usuario['apellido']
                     request.session['tipo_usuario'] = usuario['tipo_usuario']
+
+                    print("SESION DESPUES DE LOGIN:", dict(request.session))  # <--- DEBUG
+                    
                     messages.success(request, 'Inicio de sesión exitoso.')
                     return redirect('/')  # Cambia por la ruta que desees
                 else:
@@ -187,3 +195,8 @@ def ver_carrito(request):
         carrito = None
 
     return render(request, 'app/shoppingcart.html', {'carrito': carrito})
+
+from django.http import JsonResponse
+
+def ver_sesion(request):
+    return JsonResponse(dict(request.session))
