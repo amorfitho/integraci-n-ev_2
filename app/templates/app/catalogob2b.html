@@ -44,43 +44,33 @@
 
 <h1>Catálogo de Productos</h1>
   <div class="catalogo">
-
     <!-- Tarjeta de producto -->
-    <div class="tarjeta">
-      <img src="{% static 'app/image/frenos.png' %}" alt="Producto 1" />
-      <h2>Pastillas de Freno Delanteras</h2>
-      <p><strong>Precio Mayorista:</strong> $10.000</p>
-      <p><strong>Cantidad:</strong> 20</p>
-      <div class="product-actions">
-          <button class="button add-to-cart" data-product-id="{{ stock.producto.id }}" data-local-id="1">Agregar al
-            carrito</button>
+    <div class="catalogo">
+  <div class="product-grid">
+    {% for stock in stocks %}
+      <div class="product-card">
+        {% if stock.producto.imagen %}
+          <img src="{{ stock.producto.imagen.url }}" alt="{{ stock.producto.nombre }}" class="product-image">
+        {% else %}
+          <img src="{% static 'app/image/default-product.jpg' %}" alt="Imagen por defecto" class="product-image">
+        {% endif %}
+
+        <div class="product-details">
+          <div class="product-name">{{ stock.producto.nombre }}</div>
+          <div class="product-price">${{ stock.producto.precio_mayorista }}</div>
+          <div>Cantidad: {{ stock.cantidad }}</div>
         </div>
-    </div>
 
-    <div class="tarjeta">
-      <img src="{% static 'app/image/condensador.png' %}" alt="Producto 2" />
-      <h2>Condensador</h2>
-      <p><strong>Precio Mayorista:</strong> $15.000</p>
-      <p><strong>Cantidad:</strong> 35</p>
-      <div class="product-actions">
-          <button class="button add-to-cart" data-product-id="{{ stock.producto.id }}" data-local-id="1">Agregar al
-            carrito</button>
+        <div class="product-actions">
+          <button class="button add-to-cart" data-product-id="{{ stock.producto.id }}" data-local-id="1">
+            Agregar al carrito
+          </button>
         </div>
-    </div>
-
-    <div class="tarjeta">
-      <img src="{% static 'app/image/anticongelante.png' %}" alt="Producto 3" />
-      <h2>Anticongelante</h2>
-      <p><strong>Precio Mayorista:</strong> $8.500</p>
-      <p><strong>Cantidad:</strong> 50</p>
-      <div class="product-actions">
-          <button class="button add-to-cart" data-product-id="{{ stock.producto.id }}" data-local-id="1">Agregar al
-            carrito</button>
-        </div>
-    </div>
-
-    <!-- Agrega más tarjetas según lo necesites -->
-
+      </div>
+    {% empty %}
+      <p>No hay stocks disponibles.</p>
+    {% endfor %}
   </div>
+</div>
 
 {% endblock %}

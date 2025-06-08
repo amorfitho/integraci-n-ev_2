@@ -202,7 +202,9 @@ def ver_sesion(request):
     return JsonResponse(dict(request.session))
 
 def CatalogoB2B(request):
-    return render(request, 'app/catalogob2b.html')
+    stocks = Stock.objects.select_related('producto', 'local').all()
+    return render(request, 'app/catalogob2b.html', {'stocks': stocks})
 
 def CatalogoB2C(request):
-    return render(request, 'app/catalogob2c.html')
+    stocks = Stock.objects.select_related('producto', 'local').all()
+    return render(request, 'app/catalogob2c.html', {'stocks': stocks})
