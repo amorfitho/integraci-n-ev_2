@@ -133,4 +133,13 @@ MEDIA_ROOT= os.path.join(BASE_DIR,"media")
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-API_BASE_URL = "http://192.168.4.31:5000"
+import socket
+
+try:
+    # Detecta la IP del host actual (el PC que corre Django y Flask)
+    HOST_IP = socket.gethostbyname(socket.gethostname())
+    API_BASE_URL = f"http://{HOST_IP}:5000"
+    print(f"✅ API_BASE_URL definido como: {API_BASE_URL}")
+except:
+    API_BASE_URL = ""
+    print("⚠️ No se pudo obtener la IP local automáticamente")
