@@ -4,7 +4,7 @@
 
 {% block contenido %}
 <h1>Listado de Sucursales y Stock de Productos</h1>
-
+<h2>agregar nuevo porducto</h2>
 {% for local in locales %}
     <h2>{{ local.nombre_local }}</h2>
     <p><strong>Dirección:</strong> {{ local.direccion }}</p>
@@ -34,7 +34,9 @@
                     <td>${{ stock.producto.precio_mayorista }}</td>
                     <td>{{ stock.cantidad }}</td>
                     <td>
+                        {% if request.session.tipo_usuario == 5 %}
                         <a href="{% url 'modificar' stock.id %}" class="button edit">Modificar</a>
+                        {% endif %}
                     </td>
                 </tr>
             {% empty %}
