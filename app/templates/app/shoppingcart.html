@@ -25,14 +25,32 @@
           <img src="{% static 'app/image/car.png' %}" alt="logo" height="60px">Autoparts
       </div>
       <div class="acnt">
-         <div><a href="#"><img src="{% static 'app/image/account.png' %}" alt="" width="30px"></a></div>
+         <div>
+      <a href="{% url 'login' %}">
+         <img src="{% static 'app/image/account.png' %}" alt="" width="30px">
+         <span style="color:white;">
+           {% if request.session.nombre %}
+             {{ request.session.nombre }}
+           {% else %}
+             Invitado
+           {% endif %}
+           <a href="{% url 'logout' %}" style="color:white; font-size: 14px; margin-left: 5px;">Cerrar sesión</a>
+         </span>
+      </a>
       </div>
+         </div>
       <div class="lateral-bar">
          <div><a href="{% url 'home' %}"><img src="{% static 'app/image/home.png' %}" alt="" width="30px"></a></div>
          <div><a href="{% url 'shoppingcart' %}"><img src="{% static 'app/image/shoppingcart.png' %}" alt="" width="30px"></a></div>
+         {% if request.session.tipo_usuario == 3 or request.session.tipo_usuario == 5 %}
+         <div><a href="{% url 'lista' %}"><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
          <div><a href="{% url 'agregar' %}"><img src="{% static 'app/image/addproduct.png' %}" alt="" width="30px"></a></div>
-         <div><a href="{% url 'lista2' %}"><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
+         {% endif %}
+         {% if request.session.tipo_usuario == 2 or request.session.tipo_usuario == 5 %}
+         <div><a href="{% url 'catalogob2c' %}"><img src="{% static 'app/image/catalogue.png' %}" alt="" width="30px"></a></div>
+         {% elif request.session.tipo_usuario == 1 or request.session.tipo_usuario == 5 %}
          <div><a href="{% url 'catalogob2b' %}"><img src="{% static 'app/image/catalogue.png' %}" alt="" width="30px"></a></div>
+         {% endif %}
      </div>
   </div>
 </div>
