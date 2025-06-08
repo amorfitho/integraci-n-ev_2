@@ -13,16 +13,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const container = document.querySelector(".container");
     const resumenPrecio = document.querySelector(".resumen-compra .card-text");
+    const direccionInput = document.getElementById("direccion-input");
+    const guardarDireccionBtn = document.getElementById("guardar-direccion");
+    const pagoBtn = document.getElementById("pago-btn");
 
-    if (!container) {
-        console.error("❌ No se encontró el contenedor .container en el DOM.");
-        return;
+    function validarDireccion(valor) {
+        return valor.trim() !== "" && valor.trim() !== "-";
+    }
+
+    function actualizarBotonPago(direccion) {
+        if (validarDireccion(direccion)) {
+            pagoBtn.classList.remove("disabled");
+            pagoBtn.style.pointerEvents = "auto";
+        } else {
+            pagoBtn.classList.add("disabled");
+            pagoBtn.style.pointerEvents = "none";
+        }
     }
 
     console.log("🧠 BASE_API:", BASE_API);
     console.log("🛒 idCarrito:", idCarrito);
-    console.log(`📤 GET: ${BASE_API}/carrito/${idCarrito}`);
 
+    // Cargar datos del carrito
     fetch(`${BASE_API}/carrito/${idCarrito}`)
         .then(res => res.json())
         .then(data => {
@@ -34,8 +46,41 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            let html = `<ul style="list-style: none; padding: 0;">`;
+            // Dirección: cargar valor y estado del botón
+            if (direccionInput && guardarDireccionBtn && pagoBtn) {
+                direccionInput.value = data.direccion_cliente || "";
+                actualizarBotonPago(direccionInput.value);
 
+                guardarDireccionBtn.addEventListener("click", () => {
+                    const nuevaDireccion = direccionInput.value.trim();
+                    if (!validarDireccion(nuevaDireccion)) {
+                        alert("❌ Dirección inválida. Ingrese una dirección válida.");
+                        return;
+                    }
+
+                    fetch(`${BASE_API}/carrito/${idCarrito}/cambiar_direccion`, {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ direccion_cliente: nuevaDireccion })
+                    })
+                    .then(res => res.json())
+                    .then(resp => {
+                        if (resp.error) {
+                            alert("❌ " + resp.error);
+                        } else {
+                            alert("✅ Dirección actualizada correctamente.");
+                            actualizarBotonPago(nuevaDireccion);
+                        }
+                    })
+                    .catch(err => {
+                        console.error("❌ Error al actualizar dirección:", err);
+                        alert("❌ Error al actualizar la dirección");
+                    });
+                });
+            }
+
+            // Renderizar productos
+            let html = `<ul style="list-style: none; padding: 0;">`;
             data.productos.forEach(item => {
                 html += `
                     <li style="margin-bottom: 10px;">
@@ -146,7 +191,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
                 });
             });
-
         })
         .catch(err => {
             console.error("❌ Error al obtener el carrito:", err);

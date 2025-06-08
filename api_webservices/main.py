@@ -710,7 +710,7 @@ def ver_carrito(carrito_id):
 
         # Verificar si el carrito existe
         cursor.execute("""
-            SELECT id_carrito, usuario_rut, tipo_cliente, estado, fecha_creacion, total_carrito
+            SELECT id_carrito, usuario_rut, tipo_cliente, estado, fecha_creacion, total_carrito, direccion_cliente
             FROM app_carrito
             WHERE id_carrito = ?
         """, (carrito_id,))

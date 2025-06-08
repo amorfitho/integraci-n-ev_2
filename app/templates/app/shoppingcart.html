@@ -43,7 +43,12 @@
           <div class="card-body">
             <h4 class="card-title">Resumen de Compra</h4>
             <p class="card-text">Precio: $</p>
-            <a href="{{ api_base_url }}/carrito/{{ id_carrito }}/pagar" class="btn btn-primary">
+            <div class="form-group" style="margin-top: 15px;">
+              <label for="direccion-input"><strong>Dirección de envío:</strong></label>
+              <input type="text" id="direccion-input" class="form-control" placeholder="Ingrese su dirección">
+              <button id="guardar-direccion" class="btn btn-secondary" style="margin-top: 10px;">Guardar dirección</button>
+            </div>
+            <a id="pago-btn" href="{{ api_base_url }}/carrito/{{ id_carrito }}/pagar" class="btn btn-primary disabled" style="pointer-events: none;">
                 Realizar pago
             </a>
           </div>
