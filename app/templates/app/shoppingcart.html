@@ -43,7 +43,9 @@
           <div class="card-body">
             <h4 class="card-title">Resumen de Compra</h4>
             <p class="card-text">Precio: $</p>
-            <a href="#" class="btn btn-primary">Realizar pago</a>
+            <a href="{{ api_base_url }}/carrito/{{ id_carrito }}/pagar" class="btn btn-primary">
+                Realizar pago
+            </a>
           </div>
         </div>
       </div>

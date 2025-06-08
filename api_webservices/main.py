@@ -1,7 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask, redirect, request, jsonify
 from app import app
 from config import get_db_connection
 from datetime import datetime
+from transbank.webpay.webpay_plus.transaction import Transaction
+from transbank.common.options import WebpayOptions
+from transbank.common.integration_type import IntegrationType
+from transbank.error.transbank_error import TransbankError
 
 
 @app.route('/productos', methods=['GET'])
@@ -919,6 +923,58 @@ def login_usuario():
         return jsonify({'error': str(e)}), 500
     finally:
         conn.close()
+
+
+# MÉTODOS PARA TBK
+@app.route('/carrito/<int:carrito_id>/pagar', methods=['GET'])
+def iniciar_pago_transbank(carrito_id):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT total_carrito FROM app_carrito WHERE id_carrito = ?", (carrito_id,))
+        row = cursor.fetchone()
+        if not row:
+            return "Carrito no encontrado", 404
+
+        total = int(row['total_carrito'])
+
+        tx = Transaction(WebpayOptions(
+            commerce_code='597055555532',
+            api_key='579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C',
+            integration_type=IntegrationType.TEST  # Usa LIVE para producción
+        ))
+        response = tx.create(
+            buy_order=f'order_{carrito_id}',
+            session_id=f'session_{carrito_id}',
+            amount=total,
+            return_url=f'http://localhost:5000/carrito/{carrito_id}/confirmar_pago'
+        )
+
+        return redirect(f"{response['url']}?token_ws={response['token']}")
+    except Exception as e:
+        return f"Error iniciando pago: {str(e)}", 500
+
+@app.route('/carrito/<int:carrito_id>/confirmar_pago', methods=['POST', 'GET'])
+def confirmar_pago_transbank(carrito_id):
+    token_ws = request.args.get('token_ws')
+    if not token_ws:
+        return "Token no encontrado", 400
+
+    try:
+        tx = Transaction(WebpayOptions(
+            commerce_code='597055555532',
+            api_key='579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C',
+            integration_type=IntegrationType.TEST
+        ))
+        result = tx.commit(token_ws)
+
+        if result['status'] == 'AUTHORIZED':
+            return comprar_carrito(carrito_id)
+
+        return "Transacción rechazada", 403
+    except TransbankError as e:
+        return f"Error al confirmar pago: {str(e)}", 500
+
 
 
 #MENSAGE ERROE SI NO CARGA
