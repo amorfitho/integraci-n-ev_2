@@ -12,6 +12,9 @@ from django.db.models import Prefetch
 
 from django.conf import settings
 
+from django.views.decorators.csrf import csrf_exempt
+import json
+
 def home(request):
     print("SESIÓN ACTUAL:", dict(request.session))
     return render(request, 'app/home.html')
@@ -71,7 +74,11 @@ def eliminar_producto (request,id_producto):
 
 def shoppingcart (request):
     id_carrito = request.session.get("id_carrito")  # Obtiene el ID de la sesión
-    return render(request, "app/shoppingcart.html", {"id_carrito": id_carrito,'api_base_url': settings.API_BASE_URL})
+    return render(request, "app/shoppingcart.html", {   "id_carrito": id_carrito,
+                                                        'api_base_url': settings.API_BASE_URL,
+                                                        'tipo_usuario': request.session.get('tipo_usuario'),
+                                                        'rut_usuario': request.session.get('rut')
+                                                    })
 
 def eliminar_stock(request, stock_id):
     stock = get_object_or_404(Stock, id=stock_id)
@@ -277,3 +284,13 @@ def CatalogoB2C(request):
         'productos': productos,
         'api_base_url': settings.API_BASE_URL
     })
+
+@csrf_exempt
+def cambiar_carrito_sesion(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        nuevo_id = data.get('nuevo_id_carrito')
+        if nuevo_id:
+            request.session['id_carrito'] = int(nuevo_id)
+            return JsonResponse({'message': 'Carrito actualizado en sesión'})
+        return JsonResponse({'error': 'ID inválido'}, status=400)

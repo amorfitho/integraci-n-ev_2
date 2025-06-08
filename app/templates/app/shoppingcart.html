@@ -2,10 +2,13 @@
 {% load static %}
 
 {% block js %}
-<!-- Define variables antes de cargar el JS -->
 <script>
     const BASE_API = "{{ api_base_url }}";
     const idCarrito = {{ id_carrito|default:"null" }};
+    const tipoUsuario = {{ tipo_usuario|default:"0" }};
+    const rutUsuario = "{{ rut_usuario|default:"" }}";
+    const cambiarCarritoUrl = "{% url 'cambiar_carrito_sesion' %}";
+    const csrfToken = "{{ csrf_token }}";
 </script>
 <script src="{% static 'app/js/sc.js' %}"></script> 
 {% endblock %}
@@ -42,6 +45,12 @@
         <div class="card" style="width: 18rem;">
           <div class="card-body">
             <h4 class="card-title">Resumen de Compra</h4>
+            {% if tipo_usuario == 1 %}
+            <div style="margin: 20px;">
+                <label for="selector-carrito"><strong>Seleccionar carrito:</strong></label>
+                <select id="selector-carrito" class="form-control" style="width: 250px;"></select>
+            </div>
+            {% endif %}
             <p class="card-text">Precio: $</p>
             <div class="form-group" style="margin-top: 15px;">
               <label for="direccion-input"><strong>Dirección de envío:</strong></label>

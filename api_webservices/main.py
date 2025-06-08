@@ -975,7 +975,26 @@ def confirmar_pago_transbank(carrito_id):
     except TransbankError as e:
         return f"Error al confirmar pago: {str(e)}", 500
 
+# VER TODOS LOS CARRITOS PARA UN RUT
+@app.route('/carritos_abiertos/<string:rut>', methods=['GET'])
+def obtener_carritos_abiertos(rut):
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
 
+        cursor.execute("""
+            SELECT id_carrito, fecha_creacion, total_carrito
+            FROM app_carrito
+            WHERE usuario_rut = ? AND estado = 'abierto'
+            ORDER BY fecha_creacion DESC
+        """, (rut,))
+        carritos = [dict(row) for row in cursor.fetchall()]
+        return jsonify(carritos), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
 
 #MENSAGE ERROE SI NO CARGA
 @app.errorhandler(404)
