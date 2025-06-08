@@ -2,6 +2,11 @@
 {% load static %}
 
 {% block js %}
+<!-- Define variables antes de cargar el JS -->
+<script>
+    const BASE_API = "{{ api_base_url }}";
+    const idCarrito = {{ id_carrito|default:"null" }};
+</script>
 <script src="{% static 'app/js/sc.js' %}"></script> 
 {% endblock %}
 
@@ -11,14 +16,13 @@
 {% endblock %}
 
 {% block contenido %}
-
 <div>
    <div class="navbar-main">
       <div class="logo">
           <img src="{% static 'app/image/car.png' %}" alt="logo" height="60px">Autoparts
       </div>
       <div class="acnt">
-         <div><a href=""><img src="{% static 'app/image/account.png' %}" alt="" width="30px"></a></div>
+         <div><a href="#"><img src="{% static 'app/image/account.png' %}" alt="" width="30px"></a></div>
       </div>
       <div class="lateral-bar">
          <div><a href="{% url 'home' %}"><img src="{% static 'app/image/home.png' %}" alt="" width="30px"></a></div>
@@ -29,42 +33,27 @@
      </div>
   </div>
 </div>
+
 <main class="page">
-         <section class="shopping-cart">
-          <div class="resumen-compra" style="margin-left: 1200px; margin-top: 120px; position: absolute;">
-            <div class="col-sm-6">
-              <div class="card" style="width: 18rem;">
-                <div class="card-body">
-                  <h4 class="card-title">Resumen de Compra</h4>
-                  <p class="card-text">Precio: $</p>
-                  <a href="#" class="btn btn-primary">Realizar pago</a>
-                </div>
-              </div>
-            </div>
+  <section class="shopping-cart">
+    <!-- Panel de resumen -->
+    <div class="resumen-compra" style="margin-left: 1200px; margin-top: 120px; position: absolute;">
+      <div class="col-sm-6">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h4 class="card-title">Resumen de Compra</h4>
+            <p class="card-text">Precio: $</p>
+            <a href="#" class="btn btn-primary">Realizar pago</a>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenedor dinámico -->
     <div class="container">
       <h2 style="color:rgb(0, 0, 0); margin: 30px;">Carrito de Compras</h2>
-
-      {% if carrito %}
-        <div style="margin: 20px;">
-          <ul style="list-style: none; padding: 0;">
-            {% for item in carrito.productos %}
-              <li style="margin-bottom: 10px;">
-                <strong>{{ item.nombre_producto }}</strong> – 
-                {{ item.cantidad }} unidad(es) x ${{ item.precio_unitario }} = 
-                ${{ item.subtotal }}
-              </li>
-            {% endfor %}
-          </ul>
-          <hr>
-          <p><strong>Total:</strong> ${{ carrito.total_carrito }}</p>
-        </div>
-      {% else %}
-        <p style="color:rgb(0, 0, 0);">Tu carrito está vacío.</p>
-      {% endif %}
+      <!-- El contenido será reemplazado por JS -->
     </div>
   </section>
-    </main>
-
+</main>
 {% endblock %}
-

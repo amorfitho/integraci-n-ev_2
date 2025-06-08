@@ -70,7 +70,8 @@ def eliminar_producto (request,id_producto):
     return redirect('lista')
 
 def shoppingcart (request):
-    return render (request, 'app/shoppingcart.html')
+    id_carrito = request.session.get("id_carrito")  # Obtiene el ID de la sesión
+    return render(request, "app/shoppingcart.html", {"id_carrito": id_carrito,'api_base_url': settings.API_BASE_URL})
 
 def eliminar_stock(request, stock_id):
     stock = get_object_or_404(Stock, id=stock_id)

@@ -1,33 +1,65 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const quantityInputs = document.querySelectorAll('.quantity-input');
-    const summarySubtotal = document.querySelector('.summary-item.subtotal .price');
-    const summaryTotal = document.querySelector('.summary-item.total .price');
+document.addEventListener("DOMContentLoaded", function () {
+    console.log("📦 sc.js cargado");
 
-    function updateCartTotal() {
-        let subtotal = 0;
-        quantityInputs.forEach(input => {
-            const quantity = parseInt(input.value);
-            const productRow = input.closest('.product');
-            const priceElement = productRow.querySelector('.price span');
-            const unitPrice = parseFloat(priceElement.dataset.unitPrice);
-            const totalPrice = quantity * unitPrice;
-            console.log(`Quantity: ${quantity}, Unit Price: ${unitPrice}, Total Price: ${totalPrice}`);
-            priceElement.textContent = `$${totalPrice.toFixed(2)}`;
-            subtotal += totalPrice;
-        });
-        console.log(`Subtotal: ${subtotal}`);
-        summarySubtotal.textContent = `$${subtotal.toFixed(2)}`;
-        summaryTotal.textContent = `$${subtotal.toFixed(2)}`;
+    if (typeof idCarrito === "undefined" || !idCarrito || isNaN(idCarrito)) {
+        console.error("❌ idCarrito inválido:", idCarrito);
+        return;
     }
 
-    quantityInputs.forEach(input => {
-        input.addEventListener('change', function () {
-            if (isNaN(input.value) || input.value <= 0) {
-                input.value = 1;
-            }
-            updateCartTotal();
-        });
-    });
+    if (typeof BASE_API === 'undefined') {
+        alert("❌ BASE_API no está definido.");
+        return;
+    }
 
-    updateCartTotal();
+    const container = document.querySelector(".container");
+    const resumenPrecio = document.querySelector(".resumen-compra .card-text");
+
+    if (!container) {
+        console.error("❌ No se encontró el contenedor .container en el DOM.");
+        return;
+    }
+
+    console.log("🧠 BASE_API:", BASE_API);
+    console.log("🛒 idCarrito:", idCarrito);
+    console.log(`📤 GET: ${BASE_API}/carrito/${idCarrito}`);
+
+    fetch(`${BASE_API}/carrito/${idCarrito}`)
+        .then(res => res.json())
+        .then(data => {
+            console.log("📥 Datos recibidos:", data);
+
+            if (data.error) {
+                console.error("❌ Error desde API:", data.error);
+                container.innerHTML += `<p style="color: red;">${data.error}</p>`;
+                return;
+            }
+
+            let html = `<ul style="list-style: none; padding: 0;">`;
+
+            data.productos.forEach(item => {
+                html += `
+                    <li style="margin-bottom: 10px;">
+                        <strong>${item.nombre_producto}</strong><br>
+                        <span style="font-size: 0.9em; color: gray;">Local: ${item.nombre_local}</span><br>
+                        ${item.cantidad} unidad(es) x $${item.precio_unitario} = 
+                        $${item.subtotal}
+                    </li>
+                `;
+            });
+
+            html += `</ul><hr><p><strong>Total:</strong> $${data.total_carrito}</p>`;
+
+            container.innerHTML = `
+                <h2 style="color:rgb(0, 0, 0); margin: 30px;">Carrito de Compras</h2>
+                ${html}
+            `;
+
+            if (resumenPrecio) {
+                resumenPrecio.textContent = "Precio: $" + data.total_carrito;
+            }
+        })
+        .catch(err => {
+            console.error("❌ Error al obtener el carrito:", err);
+            container.innerHTML += `<p style="color: red;">Error al cargar el carrito.</p>`;
+        });
 });
