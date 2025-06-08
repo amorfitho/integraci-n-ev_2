@@ -2,6 +2,9 @@
 {% load static %}
 
 {% block js %}
+<script>
+const BASE_API = "{{ api_base_url }}";
+</script>
 <script src="{% static 'app/js/catalogo.js' %}"></script>
 {% endblock %}
 

@@ -10,6 +10,8 @@ from .forms import ProductoForm, LoginForm
 from django.http import JsonResponse
 from django.db.models import Prefetch
 
+from django.conf import settings
+
 def home(request):
     print("SESIÓN ACTUAL:", dict(request.session))
     return render(request, 'app/home.html')
@@ -259,11 +261,18 @@ def ver_sesion(request):
 def CatalogoB2B(request):
     productos = Producto.objects.prefetch_related(
         Prefetch('stocks', queryset=Stock.objects.select_related('local'), to_attr='stock_local')
-    )
-    return render(request, 'app/catalogob2b.html', {'productos': productos})
+    ).all()
+
+    return render(request, 'app/catalogob2b.html', {
+        'productos': productos,
+        'api_base_url': settings.API_BASE_URL  # ← ESTA LÍNEA ES LA CLAVE
+    })
 
 def CatalogoB2C(request):
     productos = Producto.objects.prefetch_related(
         Prefetch('stocks', queryset=Stock.objects.select_related('local'), to_attr='stock_local')
     ).all()
-    return render(request, 'app/catalogob2c.html', {'productos': productos})
+    return render(request, 'app/catalogob2c.html', {
+        'productos': productos,
+        'api_base_url': settings.API_BASE_URL
+    })

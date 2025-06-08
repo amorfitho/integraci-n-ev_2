@@ -1,24 +1,29 @@
-const BASE_API = "http://192.168.4.31:5000"; // ✅ IP correcta
-
 document.addEventListener("DOMContentLoaded", function () {
+    if (typeof BASE_API === 'undefined') {
+        alert("❌ BASE_API no está definido. Asegúrate de que el HTML lo defina antes de cargar este script.");
+        return;
+    }
+
     const botonesAgregar = document.querySelectorAll(".add-to-cart");
 
     botonesAgregar.forEach(boton => {
         boton.addEventListener("click", function () {
-            const productoId = this.dataset.productId;
-            const localId = this.dataset.localId;
-            const idCarrito = this.dataset.idCarrito;
+            const productoId = parseInt(this.dataset.productId);
+            const localId = parseInt(this.dataset.localId);
+            const idCarrito = parseInt(this.dataset.idCarrito);
             const cantidad = 1;
+
+            if (!productoId || !localId || !idCarrito) {
+                alert("❌ Datos inválidos. Revisa los atributos del botón.");
+                return;
+            }
 
             const textoOriginal = this.textContent;
             this.disabled = true;
             this.textContent = "Agregando...";
 
-            console.log("Enviando a Flask:", {
-                producto_id: productoId,
-                local_id: localId,
-                cantidad: cantidad
-            });
+            console.log("➡️ Enviando a:", `${BASE_API}/carrito/${idCarrito}/agregar_producto`);
+            console.log("➡️ Datos:", { productoId, localId, cantidad });
 
             fetch(`${BASE_API}/carrito/${idCarrito}/agregar_producto`, {
                 method: "POST",
@@ -39,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 alert("✅ " + data.message);
             })
             .catch(error => {
-                alert("❌ " + error.message);
+                alert("❌ Error: " + error.message);
                 console.error(error);
             })
             .finally(() => {
