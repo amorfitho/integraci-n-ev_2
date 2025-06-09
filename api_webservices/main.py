@@ -958,7 +958,7 @@ def iniciar_pago_transbank(carrito_id):
 def confirmar_pago_transbank(carrito_id):
     token_ws = request.args.get('token_ws')
     if not token_ws:
-        return "Token no encontrado", 400
+        return redirect(f"http://localhost:8000/shoppingcart?carrito={carrito_id}&error=sin_token")
 
     try:
         tx = Transaction(WebpayOptions(
@@ -969,11 +969,35 @@ def confirmar_pago_transbank(carrito_id):
         result = tx.commit(token_ws)
 
         if result['status'] == 'AUTHORIZED':
-            return comprar_carrito(carrito_id)
+            comprar_carrito(carrito_id)
 
-        return "Transacción rechazada", 403
+            # Obtener datos del carrito para acceder al rut
+            conn = get_db_connection()
+            carrito = conn.execute('SELECT * FROM app_carrito WHERE id = ?', (carrito_id,)).fetchone()
+
+            if carrito:
+                rut = carrito['usuario_rut']
+                usuario = conn.execute('SELECT * FROM users_customuser WHERE rut = ?', (rut,)).fetchone()
+
+                if usuario:
+                    tipo_usuario = usuario['tipo_usuario']
+                    conn.close()
+                if tipo_usuario == 1:
+                    return redirect("http://localhost:8000/catalogob2b")
+                elif tipo_usuario == 2:
+                    return redirect("http://localhost:8000/catalogob2c")
+                else:
+                    return redirect("http://localhost:8000/")
+                
+            conn.close()
+            return redirect("http://localhost:8000/")
+        
+         # ❌ Si el pago fue rechazado
+        return redirect(f"http://localhost:8000/shoppingcart?carrito={carrito_id}&error=rechazado")
+
+        #return "Transacción rechazada", 403
     except TransbankError as e:
-        return f"Error al confirmar pago: {str(e)}", 500
+        return redirect(f"http://localhost:8000/shoppingcart?carrito={carrito_id}&error=rechazado")
 
 # VER TODOS LOS CARRITOS PARA UN RUT
 @app.route('/carritos_abiertos/<string:rut>', methods=['GET'])
