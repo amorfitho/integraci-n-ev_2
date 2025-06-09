@@ -32,7 +32,13 @@
                     <td>{{ stock.producto.nombre }}</td>
                     <td>${{ stock.producto.precio_minorista }}</td>
                     <td>${{ stock.producto.precio_mayorista }}</td>
-                    <td>{{ stock.cantidad }}</td>
+                    <td>
+                        {% if stock.cantidad > stock.producto.stock_minimo %}
+                            {{ stock.cantidad }}
+                        {% else %}
+                            <h5>Stock insuficiente renovar stock</h5>
+                        {% endif %}
+                    </td>
                     <td>
                         {% if request.session.tipo_usuario == 5 %}
                         <a href="{% url 'modificar' stock.id %}" class="button edit">Modificar</a>
