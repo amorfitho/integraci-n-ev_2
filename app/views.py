@@ -1,6 +1,7 @@
 import requests
 from django.shortcuts import render, redirect, get_object_or_404
 
+from django.db.models import F
 from .forms import RegistroUsuarioForm
 from django.contrib import messages
 
@@ -26,7 +27,25 @@ def lista2(request):
 def sucursales_y_stock(request):
     # Usamos prefetch_related con el related_name correcto: "stocks"
     locales = Local.objects.prefetch_related('stocks__producto').all()
-    return render(request, 'crud/lista.html', {'locales': locales})
+    # 2) Detectar stocks por debajo del mínimo
+    low_stocks = Stock.objects.filter(
+        cantidad__lt=F('producto__stock_minimo')
+    ).select_related('producto', 'local')
+
+    # 3) Generar un mensaje warning por cada stock bajo
+    for stock in low_stocks:
+        producto = stock.producto.nombre
+        local = stock.local.nombre_local
+        cantidad = stock.cantidad
+        messages.warning(
+            request,
+            f'¡Atención! "{producto}" en "{local}" tiene sólo {cantidad} unidades.'
+        )
+
+    # 4) Renderizar igual que antes (tu lista.html)
+    return render(request, 'crud/lista.html', {'locales': locales,
+        # ya no necesitas pasar low_stocks si no lo usas en el template
+    })
 
 def agregar(request):
     if request.method == 'POST':

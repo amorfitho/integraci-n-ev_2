@@ -3,6 +3,15 @@
 {% load humanize %}
 
 {% block contenido %}
+
+{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="alert alert-{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
 <h1>Listado de Sucursales y Stock de Productos</h1>
 <h2>agregar nuevo porducto</h2>
 {% for local in locales %}
@@ -15,8 +24,11 @@
                 <th>Imagen</th>
                 <th>Producto</th>
                 <th>Precio</th>
+                <th>Stock Minimo</th>
                 <th>Cantidad en Stock</th>
-                <th>Acciones</th>
+                {% if request.session.tipo_usuario == 5 %}
+                    <th>Acciones</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -32,13 +44,8 @@
                     <td>{{ stock.producto.nombre }}</td>
                     <td>${{ stock.producto.precio_minorista }}</td>
                     <td>${{ stock.producto.precio_mayorista }}</td>
-                    <td>
-                        {% if stock.cantidad > stock.producto.stock_minimo %}
-                            {{ stock.cantidad }}
-                        {% else %}
-                            <h5>Stock insuficiente renovar stock</h5>
-                        {% endif %}
-                    </td>
+                    <td>{{ stock.producto.stock_minimo }}</td>
+                    <td>{{ stock.cantidad }}</td>
                     <td>
                         {% if request.session.tipo_usuario == 5 %}
                         <a href="{% url 'modificar' stock.id %}" class="button edit">Modificar</a>
