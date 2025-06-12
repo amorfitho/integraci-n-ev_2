@@ -1,0 +1,198 @@
+/* Contenedor principal */
+.container {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 1rem 2rem;
+  background: #f8fafc; /* color claro suave */
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2d3748; /* gris oscuro suave */
+}
+
+/* Títulos */
+h1, h2 {
+  color: #1a202c; /* más oscuro para encabezados */
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+/* Sección para agregar producto */
+.add-product-section {
+  background: #e2e8f0; /* gris muy suave */
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.add-product-title {
+  margin: 0 0 0.5rem 0;
+}
+
+.button.add {
+  background-color: #4a90e2; /* azul suave */
+  color: white;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.button.add:hover {
+  background-color: #357abd;
+}
+
+/* Sección local */
+.local-section {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.07);
+  margin-bottom: 2.5rem;
+  padding: 1.5rem 2rem;
+}
+
+.local-header {
+  border-bottom: 2px solid #cbd5e1; /* gris claro */
+  margin-bottom: 1rem;
+}
+
+.local-name {
+  margin: 0;
+  color: #2b6cb0; /* azul más intenso */
+  font-weight: 700;
+}
+
+.local-address {
+  margin-bottom: 1.5rem;
+  font-size: 0.95rem;
+  color: #4a5568; /* gris medio */
+}
+
+/* Tabla */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.6rem;
+  font-size: 0.95rem;
+}
+
+thead th {
+  background-color: #4299e1; /* azul */
+  color: white;
+  padding: 12px 15px;
+  font-weight: 600;
+  border-radius: 10px 10px 0 0;
+  text-align: left;
+}
+
+tbody tr {
+  background: #edf2f7; /* azul muy claro */
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+tbody tr:hover {
+  background-color: #e2e8f0;
+}
+
+tbody td {
+  padding: 12px 15px;
+  vertical-align: middle;
+}
+
+.price {
+  color: #2c5282; /* azul oscuro */
+  font-weight: 700;
+}
+
+.price-wholesale {
+  color: #285e61; /* azul verdoso */
+}
+
+.stock-quantity {
+  font-weight: 600;
+}
+
+/* Resaltar stock bajo */
+.stock-quantity[data-min-stock]:not(:empty) {
+  /* si cantidad menor al min stock, cambiar color */
+}
+
+.stock-quantity[data-min-stock] {
+  position: relative;
+}
+
+.stock-quantity[data-min-stock]:before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #48bb78; /* verde por defecto */
+}
+
+/* Ejemplo: si stock < min_stock, cambiar a rojo - se podría controlar con JS */
+.stock-quantity[data-min-stock].bajo-stock:before {
+  background-color: #f56565; /* rojo suave */
+}
+
+/* Acciones */
+.button.edit {
+  background-color: #4299e1;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.button.edit:hover {
+  background-color: #3182ce;
+}
+
+/* Mensajes */
+.messages {
+  list-style-type: none;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.alert {
+  padding: 10px 20px;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.alert-success {
+  background-color: #48bb78;
+  color: white;
+}
+
+.alert-error, .alert-danger {
+  background-color: #f56565;
+  color: white;
+}
+
+.alert-warning {
+  background-color: #ecc94b;
+  color: #2d3748;
+}
+
+.alert-info {
+  background-color: #4299e1;
+  color: white;
+}
+
+.empty-state {
+  color: #718096;
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+}

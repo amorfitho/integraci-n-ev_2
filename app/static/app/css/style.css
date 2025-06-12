@@ -1,79 +1,87 @@
-.body-main{
-    background-color: rgb(255, 244, 230);
+.body-main {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    padding-top: 80px;
 }
 
-
-.navbar-main{
-    display: flex;
-    background-color: rgb(252, 169, 102);
-    height: 80px;
-    width: 100%;
-    justify-content: space-between;
+/* Navbar */
+.navbar-main {
     position: fixed;
-    z-index: 5;
-}
-
-.logo{
-    height: 100%;
-    text-align: center;
-    align-content: center;
-    color: rgba(0, 0, 0, 0.774);
-    font-size: 2rem;
-    font-family: "Cal Sans", sans-serif;
-    font-weight: 700;
+    top: 0;
     left: 0;
-    margin-left: 10px;
-}
-
-.navbar-main button {
-    width: auto;
-    margin-top: 25px;
-    border: 1px solid black;
-    border-radius: 5px;
-}
-
-.acnt img{
+    width: 100%;
+    z-index: 1000; /* Asegura que esté sobre todo */
+    background-color: #f1f5f9; /* O el color que uses */
     display: flex;
-    text-align: center;
-    align-content: center;
-    height: 100%;
-    width: 40px;
-    margin-top: 25px;
-    margin-right: 50px;
-    background-color: rgba(180, 180, 180, 0);
+    justify-content: space-between;
     align-items: center;
+    padding: 15px 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* .lateral-bar{
+
+.logo {
     display: flex;
-    margin-top: 80px;
-    height: 1000px;
-    width: 300px;
-    position: fixed;
-    flex-direction: column;
-    text-decoration: none;
-    margin-left: 20px;
+    align-items: center;
+    color: #1e293b;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
 
-} */
+.acnt {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-right: 1rem;
+}
 
+.acnt img {
+    width: 32px;
+    height: 32px;
+}
+
+.acnt span {
+    font-size: 0.875rem;
+    color: #64748b;
+}
+
+.acnt a {
+    color: #3b82f6;
+    font-weight: 500;
+    margin-left: 8px;
+    font-size: 0.8rem;
+}
+
+.acnt a:hover {
+    text-decoration: underline;
+}
+
+/* Sidebar */
 .lateral-bar {
     position: fixed;
-    top: 80px;
+    top: 80px; /* Debajo del navbar */
     left: 0;
-    width: 80px; /* espacio justo para los íconos */
+    width: 60px;
     height: calc(100% - 80px);
+    background-color: #f1f5f9;
+    z-index: 900;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding-top: 20px;
-    background-color: transparent; /* o un color de fondo si quieres */
+    gap: 15px;
+    padding: 10px;
 }
 
-.lateral-bar div{
-    margin-top: 25px;
+
+.lateral-bar div {
+    margin-bottom: 24px;
 }
 
-.row {
-    margin-right: 0;
-    margin-left: 0;
+.lateral-bar img {
+    width: 28px;
+    transition: transform 0.2s;
+}
+
+.lateral-bar img:hover {
+    transform: scale(1.1);
 }

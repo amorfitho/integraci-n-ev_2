@@ -28,13 +28,13 @@
          <div>
       <a href="{% url 'login' %}">
          <img src="{% static 'app/image/account.png' %}" alt="" width="30px">
-         <span style="color:white;">
+         <span style="color:rgb(0, 0, 0);">
            {% if request.session.nombre %}
              {{ request.session.nombre }}
            {% else %}
              Invitado
            {% endif %}
-           <a href="{% url 'logout' %}" style="color:white; font-size: 14px; margin-left: 5px;">Cerrar sesión</a>
+           <a href="{% url 'logout' %}" style="color:rgb(0, 0, 0); font-size: 14px; margin-left: 5px;">Cerrar sesión</a>
          </span>
       </a>
       </div>
@@ -56,38 +56,40 @@
 </div>
 
 <main class="page">
-  <section class="shopping-cart">
-    <!-- Panel de resumen -->
-    <div class="resumen-compra" style="margin-left: 1200px; margin-top: 120px; position: absolute;">
-      <div class="col-sm-6">
-        <div class="card" style="width: 18rem;">
-          <div class="card-body">
-            <h4 class="card-title">Resumen de Compra</h4>
-            {% if tipo_usuario == 1 %}
-            <div style="margin: 20px;">
-                <label for="selector-carrito"><strong>Seleccionar carrito:</strong></label>
-                <select id="selector-carrito" class="form-control" style="width: 250px;"></select>
-            </div>
-            {% endif %}
-            <p class="card-text">Precio: $</p>
-            <div class="form-group" style="margin-top: 15px;">
-              <label for="direccion-input"><strong>Dirección de envío:</strong></label>
-              <input type="text" id="direccion-input" class="form-control" placeholder="Ingrese su dirección">
-              <button id="guardar-direccion" class="btn btn-secondary" style="margin-top: 10px;">Guardar dirección</button>
-            </div>
-            <a id="pago-btn" href="{{ api_base_url }}/carrito/{{ id_carrito }}/pagar" class="btn btn-primary disabled" style="pointer-events: none;">
-                Realizar pago
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Contenedor dinámico -->
-    <div class="container">
-      <h2 style="color:rgb(0, 0, 0); margin: 30px;">Carrito de Compras</h2>
+  <section class="shopping-cart" style="display: flex; gap: 40px; padding: 20px;">
+    
+    <!-- Contenedor dinámico del carrito (izquierda) -->
+    <div class="container" style="flex: 1;">
+      <h2 style="color: rgb(0, 0, 0); margin-bottom: 30px;">Carrito de Compras</h2>
       <!-- El contenido será reemplazado por JS -->
     </div>
+
+    <!-- Panel de resumen (derecha) -->
+    <div class="resumen-compra">
+  <div class="card resumen-card">
+    <div class="card-body">
+      <h4 class="card-title">Resumen de Compra</h4>
+      {% if tipo_usuario == 1 %}
+      <div class="selector-carrito-container">
+        <label for="selector-carrito"><strong>Seleccionar carrito:</strong></label>
+        <select id="selector-carrito" class="form-control"></select>
+      </div>
+      {% endif %}
+      <p class="card-text">Precio: $</p>
+      <div class="form-group direccion-envio">
+        <label for="direccion-input"><strong>Dirección de envío:</strong></label>
+        <input type="text" id="direccion-input" class="form-control" placeholder="Ingrese su dirección">
+        <button id="guardar-direccion" class="btn btn-secondary mt-3">Guardar dirección</button>
+      </div>
+      <a id="pago-btn" href="{{ api_base_url }}/carrito/{{ id_carrito }}/pagar" class="btn btn-primary disabled mt-3" style="pointer-events: none;">
+        Realizar pago
+      </a>
+    </div>
+  </div>
+</div>
+
+
   </section>
 </main>
+
 {% endblock %}

@@ -55,7 +55,7 @@ def agregar(request):
             local_default = Local.objects.first()
             if local_default:
                 Stock.objects.create(local=local_default, producto=producto, cantidad=0)
-            return redirect('lista2')
+            return redirect('lista')
     else:
         form = ProductoForm()
     return render(request, 'crud/agregar.html', {'form': form})

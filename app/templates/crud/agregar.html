@@ -6,6 +6,7 @@
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'app/css/add.css' %}">
+<link rel="stylesheet" href="{% static 'app/css/style.css' %}">
 {% endblock %}
 
 {% block contenido %}
@@ -21,23 +22,27 @@
          <div><a href="{% url 'home' %}"><img src="{% static 'app/image/home.png' %}" alt="" width="30px"></a></div>
          <div><a href="{% url 'shoppingcart' %}"><img src="{% static 'app/image/shoppingcart.png' %}" alt="" width="30px"></a></div>
          <div><a href="{% url 'agregar' %}"><img src="{% static 'app/image/addproduct.png' %}" alt="" width="30px"></a></div>
-         <div><a href="{% url 'lista2' %}"><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'lista' %}"><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
          <div><a href="{% url 'catalogob2b' %}"><img src="{% static 'app/image/catalogue.png' %}" alt="" width="30px"></a></div>
      </div>
   </div>
-  <div class="form" style="justify-content: center; align-items: center; margin-top: 100px;">
-    <form action="" method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form }}
-        <div class="button-container">
-            <input type="reset" value="Cancelar" class="button cancel">
-            <input type="submit" value="Guardar" class="button save">
-        </div>
-    </form>
+
+  <div class="form" style="justify-content: center; align-items: center; margin-top: 100px; max-width: 500px; margin-left: auto; margin-right: auto;">
+      <h2 style="text-align: center; margin-bottom: 20px; color: #2d3748; font-weight: 700;">Agregar producto</h2>
+      <form action="" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          {{ form }}
+          <div class="button-container">
+              <input type="reset" value="Cancelar" class="button cancel">
+              <input type="submit" value="Guardar" class="button save">
+          </div>
+      </form>
   </div>
+
+{% endblock %}
+
     
 
 
 
 
-{% endblock %}

@@ -2,63 +2,106 @@
 {% load static %}
 {% load humanize %}
 
+{% block css %}
+<link rel="stylesheet" href="{% static 'app/css/lista.css' %}">
+<link rel="stylesheet" href="{% static 'app/css/style.css' %}">
+{% endblock %}
+
 {% block contenido %}
 
-{% if messages %}
-  <ul class="messages">
-    {% for message in messages %}
-      <li class="alert alert-{{ message.tags }}">{{ message }}</li>
-    {% endfor %}
-  </ul>
-{% endif %}
+<div class="navbar-main">
+      <div class="logo">
+          <img src="{% static 'app/image/car.png' %}" alt="logo" height="60px">Autoparts
+      </div>
+      <div class="acnt">
+         <div>
+      <a href="{% url 'login' %}">
+         <img src="{% static 'app/image/account.png' %}" alt="" width="30px">
+         <span style="color:rgb(0, 0, 0);">
+           {% if request.session.nombre %}
+             {{ request.session.nombre }}
+           {% else %}
+             Invitado
+           {% endif %}
+           <a href="{% url 'logout' %}" style="color:rgb(0, 0, 0); font-size: 14px; margin-left: 5px;">Cerrar sesión</a>
+         </span>
+      </a>
+      </div>
+         </div>
+      <div class="lateral-bar">
+         <div><a href="{% url 'home' %}"><img src="{% static 'app/image/home.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'shoppingcart' %}"><img src="{% static 'app/image/shoppingcart.png' %}" alt="" width="30px"></a></div>
+         {% if request.session.tipo_usuario == 3 or request.session.tipo_usuario == 5 %}
+         <div><a href="{% url 'lista' %}"><img src="{% static 'app/image/list.png' %}" alt="" width="30px"></a></div>
+         <div><a href="{% url 'agregar' %}"><img src="{% static 'app/image/addproduct.png' %}" alt="" width="30px"></a></div>
+         {% endif %}
+         {% if request.session.tipo_usuario == 2 or request.session.tipo_usuario == 5 %}
+         <div><a href="{% url 'catalogob2c' %}"><img src="{% static 'app/image/catalogue.png' %}" alt="" width="30px"></a></div>
+         {% elif request.session.tipo_usuario == 1 or request.session.tipo_usuario == 5 %}
+         <div><a href="{% url 'catalogob2b' %}"><img src="{% static 'app/image/catalogue.png' %}" alt="" width="30px"></a></div>
+         {% endif %}
+     </div>
+  </div>
 
-<h1>Listado de Sucursales y Stock de Productos</h1>
-<h2>agregar nuevo porducto</h2>
-{% for local in locales %}
-    <h2>{{ local.nombre_local }}</h2>
-    <p><strong>Dirección:</strong> {{ local.direccion }}</p>
+<div class="container">
+  {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li class="alert alert-{{ message.tags }}">{{ message }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
 
-    <table border="1">
+  <h1>Listado de Sucursales y Stock de Productos</h1>
+  
+  <div class="add-product-section">
+    <h2 class="add-product-title">Agregar Nuevo Producto</h2>
+    <!-- Add your form or link here -->
+    <a href="{% url 'agregar' %}" class="button add">Agregar Producto</a>
+  </div>
+  
+  {% for local in locales %}
+    <div class="local-section">
+      <div class="local-header">
+        <h2 class="local-name">{{ local.nombre_local }}</h2>
+      </div>
+      <p class="local-address"><strong>Dirección:</strong> {{ local.direccion }}</p>
+
+      <table>
         <thead>
-            <tr>
-                <th>Imagen</th>
-                <th>Producto</th>
-                <th>Precio</th>
-                <th>Stock Minimo</th>
-                <th>Cantidad en Stock</th>
-                {% if request.session.tipo_usuario == 5 %}
-                    <th>Acciones</th>
-                {% endif %}
-            </tr>
+          <tr>
+            <th>Producto</th>
+            <th>Precio Minorista</th>
+            <th>Precio Mayorista</th>
+            <th>Stock Mínimo</th>
+            <th>Cantidad</th>
+            {% if request.session.tipo_usuario == 5 %}
+              <th>Acciones</th>
+            {% endif %}
+          </tr>
         </thead>
         <tbody>
-            {% for stock in local.stocks.all %}
-                <tr>
-                    <td>
-                        {% if stock.producto.imagen %}
-                            <img src="{{ stock.producto.imagen.url }}" alt="{{ stock.producto.nombre }}" class="product-image">
-                        {% else %}
-                            <img src="{% static 'app/image/default-product.jpg' %}" alt="Imagen por defecto" class="product-image">
-                        {% endif %}
-                    </td>
-                    <td>{{ stock.producto.nombre }}</td>
-                    <td>${{ stock.producto.precio_minorista }}</td>
-                    <td>${{ stock.producto.precio_mayorista }}</td>
-                    <td>{{ stock.producto.stock_minimo }}</td>
-                    <td>{{ stock.cantidad }}</td>
-                    <td>
-                        {% if request.session.tipo_usuario == 5 %}
-                        <a href="{% url 'modificar' stock.id %}" class="button edit">Modificar</a>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="2">Este local no tiene productos en stock.</td>
-                </tr>
-            {% endfor %}
+          {% for stock in local.stocks.all %}
+            <tr>
+              <td>{{ stock.producto.nombre }}</td>
+              <td class="price">${{ stock.producto.precio_minorista|intcomma }}</td>
+              <td class="price price-wholesale">${{ stock.producto.precio_mayorista|intcomma }}</td>
+              <td>{{ stock.producto.stock_minimo }}</td>
+              <td class="stock-quantity" data-min-stock="{{ stock.producto.stock_minimo }}">{{ stock.cantidad }}</td>
+              <td>
+                {% if request.session.tipo_usuario == 5 %}
+                  <a href="{% url 'modificar' stock.id %}" class="button edit">Modificar</a>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="7" class="empty-state">Este local no tiene productos en stock.</td>
+            </tr>
+          {% endfor %}
         </tbody>
-    </table>
-{% endfor %}
-
+      </table>
+    </div>
+  {% endfor %}
+</div>
 {% endblock %}

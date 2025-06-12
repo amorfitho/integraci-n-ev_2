@@ -1,25 +1,76 @@
-.resumen-compra {
+.shopping-cart {
   display: flex;
+  gap: 40px;
+  padding: 20px;
+  position: relative; /* para contener z-index si se usa */
 }
 
-.resumen-compra h3 {
-  margin-top: 0;
-  font-size: 18px;
+.resumen-compra {
+  flex: 0 0 350px; /* Más ancho, fijo */
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
 }
 
-.resumen-compra p {
-  margin: 10px 0;
+.resumen-card {
+  width: 100%;
+  border: none; /* Quitar borde extra del card de Bootstrap */
 }
 
-.resumen-compra button {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 5px;
-  cursor: pointer;
+.resumen-card .card-body {
+  padding: 1rem 1.5rem;
 }
 
-.resumen-compra button:hover {
-  background-color: #0056b3;
+.resumen-card .card-title {
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.selector-carrito-container {
+  margin-bottom: 20px;
+}
+
+.selector-carrito-container label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #444;
+}
+
+#selector-carrito {
+  width: 100%;
+  max-width: 300px;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.direccion-envio label {
+  font-weight: 600;
+  color: #444;
+}
+
+.direccion-envio input {
+  width: 100%;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-top: 4px;
+}
+
+.direccion-envio button {
+  width: 100%;
+  border-radius: 6px;
+}
+
+#pago-btn {
+  width: 100%;
+  font-weight: 600;
+  border-radius: 6px;
 }

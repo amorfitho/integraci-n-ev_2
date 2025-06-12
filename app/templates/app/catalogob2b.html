@@ -25,13 +25,13 @@ const BASE_API = "{{ api_base_url }}";
          <div>
       <a href="{% url 'login' %}">
          <img src="{% static 'app/image/account.png' %}" alt="" width="30px">
-         <span style="color:white;">
+         <span style="color:rgb(0, 0, 0);">
            {% if request.session.nombre %}
              {{ request.session.nombre }}
            {% else %}
              Invitado
            {% endif %}
-           <a href="{% url 'logout' %}" style="color:white; font-size: 14px; margin-left: 5px;">Cerrar sesión</a>
+           <a href="{% url 'logout' %}" style="color:rgb(0, 0, 0); font-size: 14px; margin-left: 5px;">Cerrar sesión</a>
          </span>
       </a>
       </div>

@@ -1,16 +1,67 @@
-<h2>Iniciar Sesión</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Entrar</button>
-</form>
 
-<a href="{% url 'home' %}">
-  <button type="button" style="margin-top: 10px;">Volver al inicio</button>
-</a>
 
-{% if messages %}
-  {% for message in messages %}
-    <p style="color:red;">{{ message }}</p>
-  {% endfor %}
-{% endif %}
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="{% static 'app/css/style.css' %}">
+<link rel="stylesheet" href="{% static 'app/css/login.css' %}">
+{% endblock %}
+    
+  {% block contenido %}  
+    <div class="container">
+        <!-- Back to Home Link -->
+        <a href="{% url 'home' %}" class="back-link">
+            <svg class="back-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Volver al inicio
+        </a>
+
+        <!-- Login Card -->
+        <div class="login-card">
+            <!-- Header -->
+            <div class="login-header">
+                <div class="login-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path>
+                    </svg>
+                </div>
+                <h2 class="login-title">Iniciar Sesión</h2>
+                <p class="login-subtitle">Ingresa tus credenciales para acceder a tu cuenta</p>
+            </div>
+
+            <!-- Error Messages -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="error-message">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <!-- Login Form -->
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+
+                <div class="form-options">
+                    <div></div>
+                    <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+                </div>
+
+                <button type="submit" class="submit-btn">Entrar</button>
+            </form>
+
+            <!-- Register Link -->
+            <div class="register-link">
+                ¿No tienes una cuenta? 
+                <a href="#">Regístrate aquí</a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            © 2025 Autoparts. Todos los derechos reservados.
+        </div>
+    </div>
+{% endblock %}

@@ -5,11 +5,10 @@ class ProductoForm(forms.ModelForm):
 
 
     class Meta:
-        model= Producto
+        model = Producto
         fields = '__all__'
-
-        widgets ={
-            "fecha_fabricacion" : forms.SelectDateWidget()
+        widgets = {
+            "fecha_fabricacion": forms.SelectDateWidget(empty_label=("Seleccione Año", "Seleccione Mes", "Seleccione Día")),
         }
 
 class RegistroUsuarioForm(forms.Form):
@@ -27,5 +26,17 @@ class RegistroUsuarioForm(forms.Form):
     direccion = forms.CharField(required=False)
 
 class LoginForm(forms.Form):
-    rut = forms.CharField(label='RUT')
-    contrasena = forms.CharField(widget=forms.PasswordInput, label='Contraseña')
+    rut = forms.CharField(
+        label='RUT',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingresa tu RUT'
+        })
+    )
+    contrasena = forms.CharField(
+        label='Contraseña',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingresa tu contraseña'
+        })
+    )
