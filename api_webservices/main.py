@@ -290,97 +290,6 @@ def delete_producto(id_producto):
 # MÉTODOS PARA EL CARRITO
 # MÉTODO PARA CREAR CARRITO
 @app.route('/carrito/crear', methods=['POST'])
-# def crear_carrito():
-#     try:
-#         data = request.json
-#         rut = data.get('usuario_rut')
-#         tipo_cliente = data.get('tipo_cliente', 'b2c')  # por defecto B2C
-
-#         if not rut or tipo_cliente not in ['b2b', 'b2c']:
-#             return jsonify({'error': 'usuario_rut y tipo_cliente válidos son requeridos'}), 400
-
-#         conn = get_db_connection()
-#         cursor = conn.cursor()
-
-#         # Verificar si ya tiene un carrito abierto
-#         cursor.execute("""
-#             SELECT id_carrito FROM app_carrito
-#             WHERE usuario_rut = ? AND estado = 'abierto'
-#             ORDER BY fecha_creacion DESC LIMIT 1
-#         """, (rut,))
-#         carrito_existente = cursor.fetchone()
-
-#         if carrito_existente:
-#             return jsonify({
-#                 'message': 'Ya tienes un carrito abierto',
-#                 'id_carrito': carrito_existente['id_carrito']
-#             }), 200
-
-#         # Crear nuevo carrito
-#         fecha_creacion = datetime.now().isoformat()
-#         cursor.execute("""
-#             INSERT INTO app_carrito (usuario_rut, fecha_creacion, estado, tipo_cliente)
-#             VALUES (?, ?, 'abierto', ?)
-#         """, (rut, fecha_creacion, tipo_cliente))
-#         conn.commit()
-
-#         nuevo_id = cursor.lastrowid
-#         return jsonify({
-#             'message': 'Carrito creado exitosamente',
-#             'id_carrito': nuevo_id
-#         }), 201
-
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
-#     finally:
-#         conn.close()
-# @app.route('/carrito/crear', methods=['POST'])
-# def crear_carrito():
-#     try:
-#         data = request.json
-#         rut = data.get('usuario_rut')
-#         tipo_cliente = data.get('tipo_cliente', 'b2c')  # por defecto B2C
-
-#         if not rut or tipo_cliente not in ['b2b', 'b2c']:
-#             return jsonify({'error': 'usuario_rut y tipo_cliente válidos son requeridos'}), 400
-
-#         conn = get_db_connection()
-#         cursor = conn.cursor()
-
-#         # Solo verificar existencia de carrito abierto si es B2C
-#         if tipo_cliente == 'b2c':
-#             cursor.execute("""
-#                 SELECT id_carrito FROM app_carrito
-#                 WHERE usuario_rut = ? AND estado = 'abierto'
-#                 ORDER BY fecha_creacion DESC LIMIT 1
-#             """, (rut,))
-#             carrito_existente = cursor.fetchone()
-
-#             if carrito_existente:
-#                 return jsonify({
-#                     'message': 'Ya tienes un carrito abierto',
-#                     'id_carrito': carrito_existente['id_carrito']
-#                 }), 200
-
-#         # Crear nuevo carrito
-#         fecha_creacion = datetime.now().isoformat()
-#         cursor.execute("""
-#             INSERT INTO app_carrito (usuario_rut, fecha_creacion, estado, tipo_cliente)
-#             VALUES (?, ?, 'abierto', ?)
-#         """, (rut, fecha_creacion, tipo_cliente))
-#         conn.commit()
-
-#         nuevo_id = cursor.lastrowid
-#         return jsonify({
-#             'message': 'Carrito creado exitosamente',
-#             'id_carrito': nuevo_id
-#         }), 201
-
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
-#     finally:
-#         conn.close()
-@app.route('/carrito/crear', methods=['POST'])
 def crear_carrito():
     try:
         data = request.json
@@ -429,113 +338,6 @@ def crear_carrito():
         conn.close()
 
 # MÉTODO PARA AGREGAR PRODUCTOS AL CARRITO
-# @app.route('/carrito/<int:carrito_id>/agregar_producto', methods=['POST'])
-# def agregar_producto_a_carrito(carrito_id):
-#     try:
-#         data = request.json
-#         producto_id = data.get('producto_id')
-#         cantidad_nueva = int(data.get('cantidad', 1))
-
-#         if not producto_id or cantidad_nueva <= 0:
-#             return jsonify({'error': 'producto_id y cantidad deben ser válidos'}), 400
-
-#         conn = get_db_connection()
-#         cursor = conn.cursor()
-
-#         # Verificar que el carrito esté abierto y recuperar tipo_cliente
-#         cursor.execute("""
-#             SELECT tipo_cliente FROM app_carrito
-#             WHERE id_carrito = ? AND estado = 'abierto'
-#         """, (carrito_id,))
-#         carrito = cursor.fetchone()
-#         if not carrito:
-#             return jsonify({'error': f'Carrito {carrito_id} no existe o no está abierto'}), 404
-#         tipo_cliente = carrito['tipo_cliente']
-
-#         # Verificar que el producto exista y obtener el precio correcto
-#         if tipo_cliente == 'b2b':
-#             cursor.execute("SELECT precio_mayorista FROM app_producto WHERE id_producto = ?", (producto_id,))
-#         else:
-#             cursor.execute("SELECT precio_minorista FROM app_producto WHERE id_producto = ?", (producto_id,))
-#         producto = cursor.fetchone()
-#         if not producto:
-#             return jsonify({'error': f'Producto {producto_id} no existe'}), 404
-
-#         precio_unitario = producto[0]
-
-#         # Verificar stock total disponible
-#         cursor.execute("""
-#             SELECT SUM(cantidad) as stock_disponible
-#             FROM app_stock
-#             WHERE producto_id = ?
-#         """, (producto_id,))
-#         stock_data = cursor.fetchone()
-#         stock_disponible = stock_data['stock_disponible'] if stock_data['stock_disponible'] else 0
-
-#         # Verificar si ya está en el carrito
-#         cursor.execute("""
-#             SELECT id_item, cantidad FROM app_carrito_item
-#             WHERE carrito_id = ? AND producto_id = ?
-#         """, (carrito_id, producto_id))
-#         item_existente = cursor.fetchone()
-
-#         if item_existente:
-#             cantidad_anterior = item_existente['cantidad']
-#             nueva_cantidad_total = cantidad_anterior + cantidad_nueva
-
-#             if nueva_cantidad_total > stock_disponible:
-#                 return jsonify({
-#                     'error': f'Stock insuficiente. Total disponible: {stock_disponible}. Ya tienes {cantidad_anterior} en el carrito.'
-#                 }), 400
-
-#             # Actualizar la cantidad del producto en el carrito
-#             cursor.execute("""
-#                 UPDATE app_carrito_item
-#                 SET cantidad = ?
-#                 WHERE id_item = ?
-#             """, (nueva_cantidad_total, item_existente['id_item']))
-
-#             subtotal_anterior = cantidad_anterior * precio_unitario
-#             subtotal_nuevo = nueva_cantidad_total * precio_unitario
-#             diferencia_total = subtotal_nuevo - subtotal_anterior
-
-#             mensaje = f'Cantidad actualizada a {nueva_cantidad_total}'
-#         else:
-#             if cantidad_nueva > stock_disponible:
-#                 return jsonify({
-#                     'error': f'Stock insuficiente. Total disponible: {stock_disponible}.'
-#                 }), 400
-
-#             subtotal_nuevo = cantidad_nueva * precio_unitario
-#             diferencia_total = subtotal_nuevo
-
-#             cursor.execute("""
-#                 INSERT INTO app_carrito_item (carrito_id, producto_id, cantidad, precio_unitario)
-#                 VALUES (?, ?, ?, ?)
-#             """, (carrito_id, producto_id, cantidad_nueva, precio_unitario))
-
-#             mensaje = 'Producto agregado al carrito'
-
-#         # ✅ Recalcular total del carrito desde los ítems
-#         cursor.execute("""
-#             SELECT SUM(cantidad * precio_unitario) AS total FROM app_carrito_item
-#             WHERE carrito_id = ?
-#         """, (carrito_id,))
-#         nuevo_total = cursor.fetchone()['total'] or 0
-
-#         cursor.execute("""
-#             UPDATE app_carrito
-#             SET total_carrito = ?
-#             WHERE id_carrito = ?
-#         """, (nuevo_total, carrito_id))
-
-#         conn.commit()
-#         return jsonify({'message': mensaje}), 200
-
-#     except Exception as e:
-#         return jsonify({'error': str(e)}), 500
-#     finally:
-#         conn.close()
 @app.route('/carrito/<int:carrito_id>/agregar_producto', methods=['POST'])
 def agregar_producto_a_carrito(carrito_id):
     conn = None  # evita UnboundLocalError
@@ -819,24 +621,57 @@ def comprar_carrito(carrito_id):
         conn.close()
 
 # MÉTODO PARA MODIFICAR DIRECCIÓN DEL CARRITO
+# @app.route('/carrito/<int:id_carrito>/cambiar_direccion', methods=['PUT'])
+# def actualizar_direccion_carrito(id_carrito):
+#     try:
+#         data = request.json
+#         nueva_direccion = data.get('direccion_cliente')
+
+#         if not nueva_direccion:
+#             return jsonify({'error': 'Se requiere el campo direccion_cliente'}), 400
+
+#         conn = get_db_connection()
+#         cursor = conn.cursor()
+
+#         # Verificar si existe el carrito
+#         cursor.execute("SELECT id_carrito FROM app_carrito WHERE id_carrito = ?", (id_carrito,))
+#         if not cursor.fetchone():
+#             return jsonify({'error': f'Carrito con id {id_carrito} no encontrado'}), 404
+
+#         # Actualizar direccion_cliente
+#         cursor.execute("""
+#             UPDATE app_carrito
+#             SET direccion_cliente = ?
+#             WHERE id_carrito = ?
+#         """, (nueva_direccion, id_carrito))
+#         conn.commit()
+
+#         return jsonify({'message': f'Dirección del carrito {id_carrito} actualizada correctamente'}), 200
+
+#     except Exception as e:
+#         return jsonify({'error': str(e)}), 500
+#     finally:
+#         conn.close()
 @app.route('/carrito/<int:id_carrito>/cambiar_direccion', methods=['PUT'])
 def actualizar_direccion_carrito(id_carrito):
+    conn = None  # para evitar UnboundLocalError si ocurre error temprano
     try:
-        data = request.json
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'No se recibió un JSON válido'}), 400
+
         nueva_direccion = data.get('direccion_cliente')
 
-        if not nueva_direccion:
-            return jsonify({'error': 'Se requiere el campo direccion_cliente'}), 400
+        if not nueva_direccion or nueva_direccion.strip() == "":
+            return jsonify({'error': 'El campo direccion_cliente no puede estar vacío'}), 400
 
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        # Verificar si existe el carrito
         cursor.execute("SELECT id_carrito FROM app_carrito WHERE id_carrito = ?", (id_carrito,))
         if not cursor.fetchone():
             return jsonify({'error': f'Carrito con id {id_carrito} no encontrado'}), 404
 
-        # Actualizar direccion_cliente
         cursor.execute("""
             UPDATE app_carrito
             SET direccion_cliente = ?
@@ -849,7 +684,8 @@ def actualizar_direccion_carrito(id_carrito):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
-        conn.close()
+        if conn:
+            conn.close()
 
 #METODO REGISTRO USUARIOS
 @app.route('/registro', methods=['POST'])
@@ -1027,7 +863,7 @@ def obtener_carritos_abiertos(rut):
     finally:
         conn.close()
 
-#MENSAGE ERROE SI NO CARGA
+# MENSAJES DE ERROR PERSONALIZADOS
 @app.errorhandler(404)
 def showMessage(error=None):
     message = {
@@ -1037,6 +873,14 @@ def showMessage(error=None):
     respone = jsonify(message)
     respone.status_code = 404
     return respone
+
+@app.errorhandler(400)
+def handle_bad_request(e):
+    return jsonify({'error': 'El JSON está mal formado o contiene errores de sintaxis'}), 400
+
+@app.errorhandler(415)
+def handle_unsupported_media_type(e):
+    return jsonify({'error': 'Debes enviar Content-Type: application/json'}), 415
         
 # if __name__ == "__main__":
 #     app.run()
