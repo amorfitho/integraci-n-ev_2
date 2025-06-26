@@ -119,29 +119,35 @@ def agregar_o_actualizar_stock():
 
 @app.route('/stock/reducir', methods=['POST'])
 def reducir_stock():
+    conn = None  # evita el UnboundLocalError
     try:
         data = request.json
-        producto_id = data['producto_id']
-        local_id = data['local_id']
-        cantidad = int(data['cantidad'])
+
+        if not data or 'producto_id' not in data or 'local_id' not in data or 'cantidad' not in data:
+            return jsonify({'error': 'Faltan campos obligatorios: producto_id, local_id, cantidad'}), 400
+
+        try:
+            cantidad = int(data['cantidad'])
+        except (ValueError, TypeError):
+            return jsonify({'error': 'La cantidad debe ser un número entero válido'}), 400
 
         if cantidad <= 0:
             return jsonify({'error': 'La cantidad a reducir debe ser mayor que cero'}), 400
 
+        producto_id = data['producto_id']
+        local_id = data['local_id']
+
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        # Verificar existencia del producto
         cursor.execute("SELECT 1 FROM app_producto WHERE id_producto = ?", (producto_id,))
         if not cursor.fetchone():
             return jsonify({'error': f'Producto con id {producto_id} no existe'}), 400
 
-        # Verificar existencia del local
         cursor.execute("SELECT 1 FROM app_local WHERE id_local = ?", (local_id,))
         if not cursor.fetchone():
             return jsonify({'error': f'Local con id {local_id} no existe'}), 400
 
-        # Verificar existencia del stock
         cursor.execute("""
             SELECT cantidad FROM app_stock
             WHERE producto_id = ? AND local_id = ?
@@ -166,10 +172,11 @@ def reducir_stock():
         return jsonify({'message': f'Stock reducido. Nueva cantidad: {nueva_cantidad}'}), 200
 
     except Exception as e:
-        print(e)
+        print("❌ Error en /stock/reducir:", e)
         return jsonify({'error': str(e)}), 500
     finally:
-        conn.close()
+        if conn is not None:
+            conn.close()
 
 # MÉTODOS PARA Consultar Stock / control stock
 @app.route('/stock/producto/<int:producto_id>', methods=['GET'])
