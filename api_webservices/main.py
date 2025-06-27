@@ -74,6 +74,9 @@ def agregar_o_actualizar_stock():
         local_id = data['local_id']
         cantidad = int(data['cantidad'])
 
+        if cantidad <= 0:
+            return jsonify({'error': 'No se puede agregar una cantidad negativa'}), 400
+
         conn = get_db_connection()
         cursor = conn.cursor()
 
@@ -116,7 +119,10 @@ def agregar_o_actualizar_stock():
         print(e)
         return jsonify({'error': str(e)}), 500
     finally:
-        conn.close()
+        try:
+            conn.close()
+        except:
+            pass
 
 @app.route('/stock/reducir', methods=['POST'])
 def reducir_stock():
