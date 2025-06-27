@@ -6,6 +6,7 @@ from transbank.webpay.webpay_plus.transaction import Transaction
 from transbank.common.options import WebpayOptions
 from transbank.common.integration_type import IntegrationType
 from transbank.error.transbank_error import TransbankError
+import requests
 
 
 @app.route('/productos', methods=['GET'])
@@ -797,6 +798,60 @@ def iniciar_pago_transbank(carrito_id):
     except Exception as e:
         return f"Error iniciando pago: {str(e)}", 500
 
+# @app.route('/carrito/<int:carrito_id>/confirmar_pago', methods=['POST', 'GET'])
+# def confirmar_pago_transbank(carrito_id):
+#     token_ws = request.args.get('token_ws')
+#     if not token_ws:
+#         return redirect(f"http://localhost:8000/shoppingcart?carrito={carrito_id}&error=sin_token")
+
+#     try:
+#         tx = Transaction(WebpayOptions(
+#             commerce_code='597055555532',
+#             api_key='579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C',
+#             integration_type=IntegrationType.TEST
+#         ))
+#         result = tx.commit(token_ws)
+
+#         if result['status'] == 'AUTHORIZED':
+#             # Ejecutar POST a /carrito/<id>/comprar
+#             compra_resp = requests.post(f"http://localhost:5000/carrito/{carrito_id}/comprar")
+#             if compra_resp.status_code != 200:
+#                 return redirect(f"http://localhost:8000/shoppingcart?carrito={carrito_id}&error=compra_fallida")
+
+#             # Obtener datos del carrito
+#             conn = get_db_connection()
+#             carrito = conn.execute('SELECT * FROM app_carrito WHERE id_carrito = ?', (carrito_id,)).fetchone()
+#             if not carrito:
+#                 conn.close()
+#                 return redirect("http://localhost:8000/")
+
+#             rut = carrito['usuario_rut']
+#             tipo_cliente = carrito['tipo_cliente']
+
+#             # Crear nuevo carrito para el mismo cliente
+#             requests.post("http://localhost:5000/carrito/crear", json={
+#                 "usuario_rut": rut,
+#                 "tipo_cliente": tipo_cliente
+#             })
+
+#             # Obtener tipo de usuario
+#             usuario = conn.execute('SELECT * FROM app_usuario WHERE rut = ?', (rut,)).fetchone()
+#             conn.close()
+
+#             if usuario:
+#                 tipo_usuario = usuario['tipo_usuario_id']
+#                 if tipo_usuario == 1:
+#                     return redirect("http://localhost:8000/catalogob2b")
+#                 elif tipo_usuario == 2:
+#                     return redirect("http://localhost:8000/catalogob2c")
+            
+#             return redirect("http://localhost:8000/")
+        
+#         # ❌ Pago rechazado
+#         return redirect(f"http://localhost:8000/shoppingcart?carrito={carrito_id}&error=rechazado")
+
+#     except TransbankError:
+#         return redirect(f"http://localhost:8000/shoppingcart?carrito={carrito_id}&error=rechazado")
 @app.route('/carrito/<int:carrito_id>/confirmar_pago', methods=['POST', 'GET'])
 def confirmar_pago_transbank(carrito_id):
     token_ws = request.args.get('token_ws')
@@ -812,35 +867,56 @@ def confirmar_pago_transbank(carrito_id):
         result = tx.commit(token_ws)
 
         if result['status'] == 'AUTHORIZED':
-            comprar_carrito(carrito_id)
+            # 1. Ejecutar POST a /carrito/<id>/comprar
+            compra_resp = requests.post(f"http://localhost:5000/carrito/{carrito_id}/comprar")
+            if compra_resp.status_code != 200:
+                return redirect(f"http://localhost:8000/shoppingcart?carrito={carrito_id}&error=compra_fallida")
 
-            # Obtener datos del carrito para acceder al rut
+            # 2. Obtener datos del carrito
             conn = get_db_connection()
-            carrito = conn.execute('SELECT * FROM app_carrito WHERE id = ?', (carrito_id,)).fetchone()
+            carrito = conn.execute('SELECT * FROM app_carrito WHERE id_carrito = ?', (carrito_id,)).fetchone()
+            if not carrito:
+                conn.close()
+                return redirect("http://localhost:8000/")
 
-            if carrito:
-                rut = carrito['usuario_rut']
-                usuario = conn.execute('SELECT * FROM users_customuser WHERE rut = ?', (rut,)).fetchone()
+            rut = carrito['usuario_rut']
+            tipo_cliente = carrito['tipo_cliente']
 
-                if usuario:
-                    tipo_usuario = usuario['tipo_usuario']
-                    conn.close()
+            # 3. Crear nuevo carrito
+            nuevo_carrito_resp = requests.post("http://localhost:5000/carrito/crear", json={
+                "usuario_rut": rut,
+                "tipo_cliente": tipo_cliente
+            })
+
+            nuevo_id = None
+            if nuevo_carrito_resp.status_code in [200, 201]:
+                nuevo_id = nuevo_carrito_resp.json().get("id_carrito")
+
+            # 4. Actualizar sesión del lado de Django
+            if nuevo_id:
+                requests.post("http://localhost:8000/cambiar_carrito_sesion/", json={
+                    "nuevo_id_carrito": nuevo_id
+                })
+
+            # 5. Obtener tipo de usuario y redirigir
+            usuario = conn.execute('SELECT * FROM app_usuario WHERE rut = ?', (rut,)).fetchone()
+            conn.close()
+
+            if usuario:
+                tipo_usuario = usuario['tipo_usuario_id']
                 if tipo_usuario == 1:
                     return redirect("http://localhost:8000/catalogob2b")
                 elif tipo_usuario == 2:
                     return redirect("http://localhost:8000/catalogob2c")
-                else:
-                    return redirect("http://localhost:8000/")
-                
-            conn.close()
+            
             return redirect("http://localhost:8000/")
-        
-         # ❌ Si el pago fue rechazado
+
+        # ❌ Si el pago fue rechazado
         return redirect(f"http://localhost:8000/shoppingcart?carrito={carrito_id}&error=rechazado")
 
-        #return "Transacción rechazada", 403
-    except TransbankError as e:
+    except TransbankError:
         return redirect(f"http://localhost:8000/shoppingcart?carrito={carrito_id}&error=rechazado")
+
 
 # VER TODOS LOS CARRITOS PARA UN RUT
 @app.route('/carritos_abiertos/<string:rut>', methods=['GET'])
